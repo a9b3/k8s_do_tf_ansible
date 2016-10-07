@@ -1,0 +1,57 @@
+# vim: set ft=sh:
+# requires
+# /etc/etcd/certs dir
+# - ca.pem
+# - ca-key.pem
+#
+# outputs
+# - etcd.pem
+# - etcd-key.pem
+
+{% set ips=[] %}
+{% for host in groups['etcd'] %}
+  {% set to_concat = ['IP.', loop.index+1, ' = ', hostvars[host]['ipv4_address_private']] %}
+  {% set str = to_concat|join('') %}
+  {% if ips.insert(loop.index, str) %}
+  {% endif %}
+{% endfor %}
+
+{% set current=hostvars[inventory_hostname] %}
+
+dest=/etc/etcd/certs
+certfilename=etcd
+
+echo '[req]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+
+[req_distinguished_name]
+
+[ v3_req ]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+IP.1 = {{current['ipv4_address_private']}}' > $dest/openssl.cnf
+
+openssl req \
+  -new \
+  -key $dest/$certfilename-key.pem \
+  -subj "/CN=$certfilename" \
+  -config $dest/openssl.cnf \
+  -out $dest/$certfilename.csr
+
+openssl genrsa \
+  -out $dest/$certfilename-key.pem 2048
+
+openssl x509 \
+  -req \
+  -in $dest/$certfilename.csr \
+  -CA $dest/ca.pem \
+  -CAkey $dest/ca-key.pem \
+  -CAcreateserial \
+  -days 365 \
+  -extensions v3_req \
+  -extfile $dest/openssl.cnf \
+  -out $dest/$certfilename.pem

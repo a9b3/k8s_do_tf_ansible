@@ -1,0 +1,38 @@
+{% set ips=[] %}
+{% for host in groups['etcd'] %}
+  {% set to_concat = [hostvars[host]['name'], '=https://', hostvars[host]['ipv4_address_private'], ':2380'] %}
+  {% set str = to_concat|join('') %}
+  {% if ips.insert(loop.index, str) %}
+  {% endif %}
+{% endfor %}
+
+{% set current=hostvars[inventory_hostname] %}
+
+[Unit]
+Description=etcd
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/etcd \
+  --name={{current['name']}} \
+  --cert-file=/etc/etcd/certs/etcd.pem \
+  --key-file=/etc/etcd/certs/etcd-key.pem \
+  --peer-cert-file=/etc/etcd/certs/etcd.pem \
+  --peer-key-file=/etc/etcd/certs/etcd-key.pem \
+  --trusted-ca-file=/etc/etcd/certs/ca.pem \
+  --peer-trusted-ca-file=/etc/etcd/certs/ca.pem \
+  --advertise-client-urls=https://{{current['ipv4_address_private']}}:2379 \
+  --initial-advertise-peer-urls=https://{{current['ipv4_address_private']}}:2380 \
+  --listen-client-urls=https://{{current['ipv4_address_private']}}:2379,https://127.0.0.1:2379 \
+  --listen-peer-urls=https://{{current['ipv4_address_private']}}:2380 \
+  --initial-cluster-token=etcd-cluster-0 \
+  --initial-cluster={{ips|join(',')}} \
+  --initial-cluster-state=new \
+  --data-dir=/var/lib/etcd
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=40000
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target

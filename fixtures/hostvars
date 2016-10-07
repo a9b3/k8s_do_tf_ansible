@@ -1,0 +1,52 @@
+{
+  '198.199.114.175': {
+    'tags.0': 'etcd',
+    'image': 'ubuntu-14-04-x64',
+    'tags.#': '1',
+    'id': '27866153',
+    'size': '512mb',
+    'inventory_hostname': '198.199.114.175',
+    'playbook_dir': '/Users/sam/Projects/devops/k8s_do_tf_ansible/terraform/playbooks/etcd',
+    'group_names': ['etcd', 'etcd.0', 'type_digitalocean_droplet'],
+    'private_networking': 'true',
+    'ansible_version': {
+      'major': 2,
+      'full': '2.1.2.0',
+      'string': '2.1.2.0',
+      'minor': 1,
+      'revision': 2
+    },
+    'status': 'active',
+    'ssh_keys.0': '',
+    'inventory_file': '/usr/local/bin/terraform-inventory',
+    'etcd_installed': {
+      'changed': True,
+      'end': '2016-10-05 06:59:57.797709',
+      'stdout': 'etcdctl version: 3.0.10\nAPI version: 3.0',
+      'cmd': ['etcdctl', 'v'],
+      'start': '2016-10-05 06:59:57.781447',
+      'delta': '0:00:00.016262',
+      'stderr': '',
+      'rc': 0,
+      'stdout_lines': ['etcdctl version: 3.0.10', 'API version: 3.0'],
+      'warnings': []
+    },
+    'ipv4_address': '198.199.114.175',
+    'ssh_keys.#': '1',
+    'groups': {
+      'ungrouped': [],
+      'all': ['198.199.114.175'],
+      'etcd.0': ['198.199.114.175'],
+      'etcd': ['198.199.114.175'],
+      'type_digitalocean_droplet': ['198.199.114.175']
+    },
+    'locked': 'false',
+    'name': 'test-etcd-0',
+    'inventory_hostname_short': '198',
+    'region': 'sfo1',
+    'omit': '__omit_place_holder__2aa4d23c9226e0cb0c858ac617607e03778a1f73',
+    'ipv4_address_private': '10.134.16.62',
+    'inventory_dir': '/usr/local/bin',
+    'ansible_check_mode': False
+  }
+}
