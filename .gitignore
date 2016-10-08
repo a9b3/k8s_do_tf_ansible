@@ -5,3 +5,6 @@ terraform.tfvars
 *.pem
 *.csr
 *.backup
+*.crt
+*.key
+*.srl
