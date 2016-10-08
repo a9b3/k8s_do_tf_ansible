@@ -64,7 +64,7 @@
       lineinfile: dest=/etc/environment regexp=^ETCDCTL_API line=ETCDCTL_API=3
 
     ##########################################################################
-    # kubernetes
+    # download kube binaries
     ##########################################################################
 
     - name: download kubectl
@@ -90,6 +90,10 @@
         url: https://storage.googleapis.com/kubernetes-release/release/{{kubernetes_version}}/bin/linux/amd64/kube-scheduler
         dest: /usr/bin/kube-scheduler
         mode: 0700
+
+    ##########################################################################
+    # kube services
+    ##########################################################################
 
     - name: template kube-apiserver.service
       template: src=./services/kube-apiserver.service.j2
