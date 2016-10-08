@@ -8,6 +8,10 @@
 
 {% set current=hostvars[inventory_hostname] %}
 
+{% set cafile='/etc/etcd/certs/ca.pem' %}
+{% set certfile='/etc/etcd/certs/crt' %}
+{% set keyfile='/etc/etcd/certs/private.key' %}
+
 [Unit]
 Description=etcd
 After=network.target
@@ -16,12 +20,12 @@ After=network.target
 ExecStart=/usr/bin/etcd \
   --name={{current['name']}} \
   --client-cert-auth \
-  --trusted-ca-file=/etc/etcd/certs/ca.pem \
-  --cert-file=/etc/etcd/certs/crt \
-  --key-file=/etc/etcd/certs/private.key \
-  --peer-trusted-ca-file=/etc/etcd/certs/ca.pem \
-  --peer-cert-file=/etc/etcd/certs/crt \
-  --peer-key-file=/etc/etcd/certs/private.key \
+  --trusted-ca-file={{cafile}} \
+  --cert-file={{certfile}} \
+  --key-file={{keyfile}} \
+  --peer-trusted-ca-file={{cafile}} \
+  --peer-cert-file={{certfile}} \
+  --peer-key-file={{keyfile}} \
   --advertise-client-urls=https://{{current['ipv4_address_private']}}:2379 \
   --listen-client-urls=https://{{current['ipv4_address_private']}}:2379,http://127.0.0.1:2379 \
   --initial-advertise-peer-urls=https://{{current['ipv4_address_private']}}:2380 \

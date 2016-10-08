@@ -11,6 +11,8 @@
 {% set current=hostvars[inventory_hostname] %}
 
 dest=/etc/etcd/certs
+certfilename=crt
+keyfilename=private.key
 
 echo '[ req ]
 distinguished_name = req_distinguished_name
@@ -41,7 +43,7 @@ openssl req \
   -out $dest/csr \
   -new -newkey rsa:2048 \
   -nodes \
-  -keyout $dest/private.key \
+  -keyout $dest/$keyfilename \
   -subj '/CN=etcd' \
   -config $dest/openssl.cnf
 
@@ -54,4 +56,4 @@ openssl x509 \
   -days 365 \
   -extensions v3_req \
   -extfile $dest/openssl.cnf \
-  -out $dest/crt
+  -out $dest/$certfilename
