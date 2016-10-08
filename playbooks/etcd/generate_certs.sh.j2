@@ -5,13 +5,12 @@
 # - ca-key.pem
 #
 # outputs
-# - etcd.pem
-# - etcd-key.pem
+# - crt
+# - private.key
 
 {% set current=hostvars[inventory_hostname] %}
 
 dest=/etc/etcd/certs
-certfilename=etcd
 
 echo '[ req ]
 distinguished_name = req_distinguished_name
@@ -43,7 +42,7 @@ openssl req \
   -new -newkey rsa:2048 \
   -nodes \
   -keyout $dest/private.key \
-  -subj '/CN=Sam' \
+  -subj '/CN=etcd' \
   -config $dest/openssl.cnf
 
 openssl x509 \
