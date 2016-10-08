@@ -21,3 +21,7 @@ resource "digitalocean_droplet" "etcd" {
 output "public_ips" {
   value = ["${digitalocean_droplet.etcd.*.ipv4_address}"]
 }
+
+output "private_ips" {
+  value = ["${digitalocean_droplet.etcd.*.ipv4_address_private}"]
+}
