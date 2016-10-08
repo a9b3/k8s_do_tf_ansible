@@ -1,12 +1,14 @@
 # Prereqs
 
-Dynamic inventory script for terraform
+Dynamic inventory script for terraform. Need this for getting host ips from terraform state for use with ansible.
 
 ```sh
 brew install terraform-inventory
 ```
 
 #### Env Vars
+
+Terraform digitalocean provider needs a valid digitalocean token, and each node requires ssh fingerprint so ansible can ssh into each machine to do it's thing.
 
 - `DO_TOKEN` [tutorial](https://www.digitalocean.com/community/tutorials/how-to-use-the-digitalocean-api-v2)<br>
 - `SSH_FINGERPRINT` [tutorial](https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets)
@@ -15,6 +17,16 @@ brew install terraform-inventory
 
 ```sh
 ssh-keygen -E md5 -lf ~/.ssh/do_rsa.pub | awk '{print $2}' | sed "s/^MD5://"
+```
+
+#### tfvars
+
+Create the file `terraform.tfvars` in project root, this will store variables that terraform uses.
+
+```sh
+do_token = "<paste digital ocean token>"
+ssh_fingerprint = "<paste ssh fingerprint>"
+etcd_count = "2"
 ```
 
 # Instructions
@@ -30,13 +42,6 @@ cd certs
 
 ```sh
 terraform apply
-```
-
-### 3) Generate certs
-
-```
-cd certs
-./individual_certs.sh
 ```
 
 ### 3) Ansible
@@ -55,23 +60,33 @@ ansible all -m ping # ping all machines
 ###Inventory
 Ansible uses inventory files to map names to machine addresses.
 
-```
+```sh
 // example
 [web]
 
 192.0.0.1
 192.0.0.2
 ```
+
+Now in playbooks you can target hosts by name.
+
+```yml
+---
+- hosts: web
+```
+
+
 ###Dynamic Inventory
+
 Terraform has information regarding names and addresses in tfstate file. Using a script you can parse the tfstate file and pass it into ansible as a dynamic inventory.
 
-```
+```sh
 brew install terraform-inventory
 ```
 
 This script will help parse tfstate file and generate an inventory file to use with ansible, you can use it by using the `-i` flag
 
-```
+```sh
 ansible -i $(which terraform-inventory) all -m ping
 
 ansible-playbook --inventory-file=$(which terraform-inventory) playbooks/foo.yml -u root
