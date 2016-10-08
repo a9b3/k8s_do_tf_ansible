@@ -45,3 +45,19 @@ echo '{
 }' > ca-csr.json
 
 cfssl gencert -initca ca-csr.json | cfssljson -bare ca
+
+openssl req \
+  -out admin.csr \
+  -new -newkey rsa:2048 \
+  -nodes \
+  -keyout admin.key \
+  -subj '/CN=kubernetes'
+
+openssl x509 \
+  -req \
+  -in admin.csr \
+  -CA ca.pem \
+  -CAkey ca-key.pem \
+  -CAcreateserial \
+  -days 365 \
+  -out admin.crt
