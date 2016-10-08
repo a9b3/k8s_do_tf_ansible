@@ -8,7 +8,7 @@ resource "digitalocean_tag" "etcd" {
 resource "digitalocean_droplet" "etcd" {
   count = "${var.count}"
   image = "ubuntu-16-04-x64"
-  name = "test-etcd-${count.index}"
+  name = "etcd-${count.index}"
   region = "sfo1"
   size = "512mb"
   private_networking = true
@@ -16,10 +16,6 @@ resource "digitalocean_droplet" "etcd" {
     "${var.ssh_fingerprint}"
   ]
   tags = ["${digitalocean_tag.etcd.name}"]
-
-  /* provisioner "local-exec" { */
-  /*   command = "echo hi >> ~/test.txt" */
-  /* } */
 }
 
 output "public_ips" {

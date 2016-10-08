@@ -1,4 +1,7 @@
+.terraform
 terraform.tfvars
 *.tfstate
-certs
 *.retry
+*.pem
+*.csr
+*.backup

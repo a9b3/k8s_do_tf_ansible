@@ -17,7 +17,35 @@ brew install terraform-inventory
 ssh-keygen -E md5 -lf ~/.ssh/do_rsa.pub | awk '{print $2}' | sed "s/^MD5://"
 ```
 
-# 2) Ansible
+# Instructions
+
+### 1) Generate CA
+
+```sh
+cd certs
+./generate_certs.sh
+```
+
+### 2) Terraform apply
+
+```sh
+terraform apply
+```
+
+### 3) Generate certs
+
+```
+cd certs
+./individual_certs.sh
+```
+
+### 3) Ansible
+
+```sh
+ansible-playbook --inventory-file=$(which terraform-inventory) playbooks/etcd/etcd.yml -u root
+```
+
+# Ansible
 
 ```sh
 ansible all -m ping # ping all machines

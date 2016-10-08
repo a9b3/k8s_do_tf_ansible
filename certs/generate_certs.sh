@@ -15,13 +15,14 @@ fi
 
 echo '{
   "signing": {
-  "default": {
-  "expiry": "8760h"
-      },
-      "profiles": {
-      "kubernetes": {
-      "usages": ["signing", "key encipherment", "server auth", "client auth"],
+    "default": {
       "expiry": "8760h"
+    },
+    "profiles": {
+      "kubernetes": {
+        "usages": ["signing", "key encipherment", "server auth", "client auth"],
+        "expiry": "8760h"
+      }
     }
   }
 }' > ca-config.json

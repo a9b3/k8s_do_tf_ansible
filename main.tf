@@ -7,7 +7,7 @@ provider "digitalocean" {
 }
 
 module "etcd" {
-  source = "./modules"
+  source = "./modules/etcd"
 
   count = "${var.etcd_count}"
   ssh_fingerprint = "${var.ssh_fingerprint}"
