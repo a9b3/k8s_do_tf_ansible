@@ -7,6 +7,8 @@
 {% endfor %}
 
 {% set current=hostvars[inventory_hostname] %}
+{% set certfile='/etc/kubernetes/certs/kubernetes.crt' %}
+{% set keyfile='/etc/kubernetes/certs/kubernetes.key' %}
 
 [Unit]
 Description=Kubernetes API Server
@@ -26,11 +28,13 @@ ExecStart=/usr/bin/kube-apiserver \
   --kubelet-certificate-authority=/etc/kubernetes/certs/ca.pem \
   --etcd-servers={{ips|join(',')}} \
   --etcd-cafile=/etc/kubernetes/certs/ca.pem \
-  --service-account-key-file=/etc/kubernetes/certs/kubernetes.key \
+  --etcd-certfile={{certfile}} \
+  --etcd-keyfile={{keyfile}} \
+  --service-account-key-file={{keyfile}} \
   --service-cluster-ip-range=10.32.0.0/24 \
   --service-node-port-range=30000-32767 \
-  --tls-cert-file=/etc/kubernetes/certs/kubernetes.crt \
-  --tls-private-key-file=/etc/kubernetes/certs/kubernetes.key \
+  --tls-cert-file={{certfile}} \
+  --tls-private-key-file={{keyfile}} \
   --token-auth-file=/etc/kubernetes/certs/token.csv \
   --v=2
 Restart=on-failure
