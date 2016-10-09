@@ -48,6 +48,7 @@ terraform apply
 
 ```sh
 ansible-playbook --inventory-file=$(which terraform-inventory) playbooks/etcd/etcd.yml -u root
+ansible-playbook --inventory-file=$(which terraform-inventory) playbooks/kube_controller/kube_controller.yml -u root
 ```
 
 # Ansible
