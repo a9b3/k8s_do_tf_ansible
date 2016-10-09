@@ -21,3 +21,7 @@ resource "digitalocean_droplet" "kube-controller" {
 output "public_ips" {
   value = ["${digitalocean_droplet.kube-controller.*.ipv4_address}"]
 }
+
+output "private_ips" {
+  value = ["${digitalocean_droplet.kube-controller.*.ipv4_address_private}"]
+}

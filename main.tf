@@ -7,6 +7,10 @@ provider "digitalocean" {
   token = "${var.do_token}"
 }
 
+/*****************************************************************************
+ * modules
+ ****************************************************************************/
+
 module "etcd" {
   source = "./modules/etcd"
 
@@ -21,6 +25,10 @@ module "kube_controller" {
   ssh_fingerprint = "${var.ssh_fingerprint}"
 }
 
+/*****************************************************************************
+ * outputs
+ ****************************************************************************/
+
 output "etcd_ips" {
   value = "${module.etcd.public_ips}"
 }
@@ -31,4 +39,8 @@ output "etcd_ips_private" {
 
 output "kube_controller_ips" {
   value = "${module.kube_controller.public_ips}"
+}
+
+output "kube_controller_ips_private" {
+  value = "${module.kube_controller.private_ips}"
 }
