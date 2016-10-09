@@ -36,32 +36,11 @@
     - file: path=/etc/kubernetes/certs state=directory
     - copy: src=../../certs/ca.pem dest=/etc/kubernetes/certs/ca.pem
     - copy: src=../../certs/ca-key.pem dest=/etc/kubernetes/certs/ca-key.pem
-    - copy: src=../../certs/admin.crt dest=/etc/kubernetes/certs/admin.crt
-    - copy: src=../../certs/admin.key dest=/etc/kubernetes/certs/admin.key
     - template: src=./scripts/generate-certs.sh.j2 dest=/etc/kubernetes/generate-certs.sh mode=0700
     - shell: /etc/kubernetes/generate-certs.sh
 
     - copy: src=./auth/token.csv dest=/etc/kubernetes/certs/
     - copy: src=./auth/authorization-policy.jsonl dest=/etc/kubernetes/certs/
-
-    ##########################################################################
-    # etcd
-    ##########################################################################
-
-    - name: unarchive etcd binary
-      unarchive:
-        src="https://github.com/coreos/etcd/releases/download/v3.0.10/etcd-v3.0.10-linux-amd64.tar.gz"
-        dest=/opt
-        copy=no
-
-    - name: mv etcd binary to /usr/bin
-      command: "{{ item }}"
-      with_items:
-        - mv /opt/etcd-v3.0.10-linux-amd64/etcd /usr/bin
-        - mv /opt/etcd-v3.0.10-linux-amd64/etcdctl /usr/bin
-
-    - name: set ETCDCTL_API=3 in environment
-      lineinfile: dest=/etc/environment regexp=^ETCDCTL_API line=ETCDCTL_API=3
 
     ##########################################################################
     # download kube binaries
