@@ -17,3 +17,16 @@ kube-apiserver \
 Another issue, when using TLS to connect to etcd cluster from api server, `kubectl get componentstatuses` returns unhealthy for etcd nodes even though they are healthy.
 
 https://github.com/kubernetes/kubernetes/issues/29330
+
+### kube
+
+#### controller
+
+- apiserver
+- controller manager
+- scheduler
+
+#### worker
+
+- kubelet
+- proxy

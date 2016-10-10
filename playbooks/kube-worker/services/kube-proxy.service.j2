@@ -1,0 +1,24 @@
+{% set ips=[] %}
+{% for host in groups['kube-controller'] %}
+  {% set to_concat = ['https://', hostvars[host]['ipv4_address_private'], ':6443'] %}
+  {% set str = to_concat|join('') %}
+  {% if ips.insert(loop.index, str) %}
+  {% endif %}
+{% endfor %}
+
+[Unit]
+Description=Kubernetes proxy
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+
+[Service]
+ExecStart=/usr/bin/kube-proxy \
+  --master={{ips|join(',')}} \
+  --kubeconfig=/etc/kubernetes/kubeconfig \
+  --proxy-mode=iptables \
+  --v=2
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

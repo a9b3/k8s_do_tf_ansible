@@ -1,0 +1,35 @@
+{% set ips=[] %}
+{% for host in groups['kube-controller'] %}
+  {% set to_concat = ['https://', hostvars[host]['ipv4_address_private'], ':6443'] %}
+  {% set str = to_concat|join('') %}
+  {% if ips.insert(loop.index, str) %}
+  {% endif %}
+{% endfor %}
+
+[Unit]
+Description=Kubelet
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStart=/usr/bin/kubelet \
+  --allow-privileged=true \
+  --cloud-provider= \
+  --cluster-dns=10.32.0.10 \
+  --cluster-domain=cluster.local \
+  --configure-cbr0=true \
+  --container-runtime=docker \
+  --docker=unix:///var/run/docker.sock \
+  --network-plugin=kubenet \
+  --kubeconfig=/etc/kubernetes/kubeconfig \
+  --reconcile-cidr=true \
+  --serialize-image-pulls=false \
+  --tls-cert-file=/etc/kubernetes/certs/kubernetes.crt \
+  --tls-private-key-file=/etc/kubernetes/certs/kubernetes.key \
+  --v=2
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

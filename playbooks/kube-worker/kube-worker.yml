@@ -1,0 +1,115 @@
+---
+- hosts: kube-worker
+  # serial: '50%'
+  become: true
+  gather_facts: False
+  vars:
+    kubernetes_version: 'v1.4.0'
+
+  handlers:
+    - name: reload docker
+      command: "{{ item }}"
+      with_items:
+        - systemctl daemon-reload
+        - systemctl restart docker
+
+    - name: reload kube-proxy
+      command: "{{ item }}"
+      with_items:
+        - systemctl daemon-reload
+        - systemctl restart kube-proxy
+
+    - name: reload kubelet
+      command: "{{ item }}"
+      with_items:
+        - systemctl daemon-reload
+        - systemctl restart kubelet
+
+  tasks:
+    - name: install python 2
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
+    ##########################################################################
+    # certs
+    ##########################################################################
+
+    - file: path=/etc/kubernetes/certs state=directory
+    - copy: src=../../certs/ca.pem dest=/etc/kubernetes/certs/ca.pem
+    - copy: src=../../certs/ca-key.pem dest=/etc/kubernetes/certs/ca-key.pem
+    - template: src=./scripts/generate-certs.sh.j2 dest=/etc/kubernetes/generate_certs.sh mode=0700
+    - shell: /etc/kubernetes/generate_certs.sh
+    - template: src=./configs/kubeconfig.j2 dest=/etc/kubernetes/kubeconfig mode=0700
+
+    ##########################################################################
+    # docker
+    ##########################################################################
+
+    - name: register is_docker_installed
+      register: is_docker_installed
+      command: docker --version
+      ignore_errors: true
+
+    - name: unarchive docker
+      unarchive:
+        src="https://get.docker.com/builds/Linux/x86_64/docker-1.12.1.tgz"
+        dest=/opt
+        copy=no
+      when: is_docker_installed|failed
+
+    - name: mv docker binary to /usr/bin
+      shell: cp /opt/docker/docker* /usr/bin
+      when: is_docker_installed|failed
+
+    - name: copy docker.service
+      copy: src=./services/docker.service
+        dest=/etc/systemd/system/docker.service
+      notify:
+        - reload docker
+
+    ##########################################################################
+    # cni container network interface
+    ##########################################################################
+
+    - file: path=/opt/cni state=directory
+    - name: unarchive cni
+      unarchive:
+        src="https://storage.googleapis.com/kubernetes-release/network-plugins/cni-07a8a28637e97b22eb8dfe710eeae1344f69d16e.tar.gz"
+        dest=/opt/cni
+        copy=no
+
+    ##########################################################################
+    # download kube binaries
+    ##########################################################################
+
+    - name: download kube-proxy
+      get_url:
+        url: https://storage.googleapis.com/kubernetes-release/release/{{kubernetes_version}}/bin/linux/amd64/kube-proxy
+        dest: /usr/bin/kube-proxy
+        mode: 0700
+
+    - name: download kubelet
+      get_url:
+        url: https://storage.googleapis.com/kubernetes-release/release/{{kubernetes_version}}/bin/linux/amd64/kubelet
+        dest: /usr/bin/kubelet
+        mode: 0700
+
+    ##########################################################################
+    # kube services
+    ##########################################################################
+
+    - name: template kubelet.service
+      template: src=./services/kubelet.service.j2
+        dest=/etc/systemd/system/kubelet.service
+        mode=0644
+      notify:
+        - reload kubelet
+
+    - name: template kube-proxy.service
+      template: src=./services/kube-proxy.service.j2
+        dest=/etc/systemd/system/kube-proxy.service
+        mode=0644
+      notify:
+        - reload kube-proxy
+
+    - service: name=kubelet state=started
+    - service: name=kube-proxy state=started
