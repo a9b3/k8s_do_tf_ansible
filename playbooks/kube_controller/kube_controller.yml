@@ -94,3 +94,7 @@
         mode=0644
       notify:
         - reload kube-scheduler
+
+    - service: name=kube-apiserver state=started
+    - service: name=kube-controller-manager state=started
+    - service: name=kube-scheduler state=started
