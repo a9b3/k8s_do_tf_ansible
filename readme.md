@@ -51,6 +51,20 @@ ansible-playbook --inventory-file=$(which terraform-inventory) playbooks/etcd/et
 ansible-playbook --inventory-file=$(which terraform-inventory) playbooks/kube_controller/kube_controller.yml -u root
 ```
 
+### 4) Local kubectl
+
+```
+wget https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/darwin/amd64/kubectl
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin
+```
+
+Make sure you have kubectl installed locally.
+
+```sh
+./scripts/setup-kubectl.sh $(terraform output kube_controller_ips) <token> 
+```
+
 # Ansible
 
 ```sh
