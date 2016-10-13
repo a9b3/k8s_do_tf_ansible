@@ -1,7 +1,7 @@
 variable "do_token" {}
 variable "ssh_fingerprint" {}
 variable "etcd_count" {}
-variable "kube_controller_count" {}
+variable "kube-controller_count" {}
 variable "kube-worker_count" {}
 
 provider "digitalocean" {
@@ -19,10 +19,10 @@ module "etcd" {
   ssh_fingerprint = "${var.ssh_fingerprint}"
 }
 
-module "kube_controller" {
-  source = "./modules/kube_controller"
+module "kube-controller" {
+  source = "./modules/kube-controller"
 
-  count = "${var.kube_controller_count}"
+  count = "${var.kube-controller_count}"
   ssh_fingerprint = "${var.ssh_fingerprint}"
 }
 
@@ -31,6 +31,7 @@ module "kube-worker" {
 
   count = "${var.kube-worker_count}"
   ssh_fingerprint = "${var.ssh_fingerprint}"
+  etcd_ips = "${module.etcd.public_ips}"
 }
 
 /*****************************************************************************
@@ -45,12 +46,12 @@ output "etcd_ips_private" {
   value = "${module.etcd.private_ips}"
 }
 
-output "kube_controller_ips" {
-  value = "${module.kube_controller.public_ips}"
+output "kube-controller_ips" {
+  value = "${module.kube-controller.public_ips}"
 }
 
-output "kube_controller_ips_private" {
-  value = "${module.kube_controller.private_ips}"
+output "kube-controller_ips_private" {
+  value = "${module.kube-controller.private_ips}"
 }
 
 output "kube-worker_ips" {

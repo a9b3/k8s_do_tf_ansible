@@ -5,6 +5,7 @@
   gather_facts: False
   vars:
     kubernetes_version: 'v1.4.0'
+    flannel_version: 'v0.6.2'
 
   handlers:
     - name: reload docker
@@ -36,9 +37,27 @@
     - file: path=/etc/kubernetes/certs state=directory
     - copy: src=../../certs/ca.pem dest=/etc/kubernetes/certs/ca.pem
     - copy: src=../../certs/ca-key.pem dest=/etc/kubernetes/certs/ca-key.pem
-    - template: src=./scripts/generate-certs.sh.j2 dest=/etc/kubernetes/generate_certs.sh mode=0700
-    - shell: /etc/kubernetes/generate_certs.sh
+    - template: src=./scripts/generate-certs.sh.j2 dest=/etc/kubernetes/generate-certs.sh mode=0700
+      vars:
+        dest: "/etc/kubernetes/certs"
+        certfilename: "kubernetes.crt"
+        keyfilename: "kubernetes.key"
+    - shell: /etc/kubernetes/generate-certs.sh
     - template: src=./configs/kubeconfig.j2 dest=/etc/kubernetes/kubeconfig mode=0700
+
+    ##########################################################################
+    # flannel
+    ##########################################################################
+
+    - name: unarchive flannel
+      get_url:
+        url: https://www.github.com/coreos/flannel/releases/download/{{flannel_version}}/flannel-{{flannel_version}}-linux-amd64.tar.gz
+        dest: /opt
+
+    - command: "{{ item }}"
+      with_items:
+        - tar xf /opt/flannel-{{flannel_version}}-linux-amd64.tar.gz -C /opt
+        - mv /opt/flanneld /usr/bin/flanneld
 
     ##########################################################################
     # docker

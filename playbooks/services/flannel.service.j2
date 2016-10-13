@@ -1,0 +1,30 @@
+{% set ips=[] %}
+{% for host in groups['etcd'] %}
+  {% set to_concat = ['https://', hostvars[host]['ipv4_address_private'], ':2379'] %}
+  {% set str = to_concat|join('') %}
+  {% if ips.insert(loop.index, str) %}
+  {% endif %}
+{% endfor %}
+
+{% set current=hostvars[inventory_hostname] %}
+{% set certfile='/etc/kubernetes/certs/kubernetes.crt' %}
+{% set keyfile='/etc/kubernetes/certs/kubernetes.key' %}
+{% set cafile='/etc/kubernetes/certs/ca.pem' %}
+
+[Unit]
+Description=Flannel
+Documentation=https://github.com/coreos/flannel
+
+[Service]
+ExecStart=/usr/bin/flanneld \
+  --etcd-endpoints={{ips|join(',')}} \
+  --etcd-keyfile={{keyfile}} \
+  --etcd-certfile={{certfile}} \
+  --etcd-cafile={{cafile}} \
+  --iface={{current['ipv4_address']}} \
+  --ip-masq=true
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
