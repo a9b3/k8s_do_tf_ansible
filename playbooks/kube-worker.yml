@@ -11,9 +11,6 @@
     keyfilename: "kubernetes.key"
 
   tasks:
-    - name: install python 2
-      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
-
     - include: ./tasks/certs.yml
 
     - template: src=./configs/kubeconfig.j2 dest=/etc/kubernetes/kubeconfig mode=0700
