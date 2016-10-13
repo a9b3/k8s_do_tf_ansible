@@ -12,6 +12,7 @@
 
   tasks:
     - include: ./tasks/certs.yml
+    - include: ./tasks/set-cluster-cidr.yml
 
     - copy: src=./auth/token.csv dest=/etc/kubernetes/certs/
     - copy: src=./auth/authorization-policy.jsonl dest=/etc/kubernetes/certs/
@@ -72,8 +73,6 @@
     - service: name=kube-apiserver state=started
     - service: name=kube-controller-manager state=started
     - service: name=kube-scheduler state=started
-
-    - shell: "/usr/bin/etcdctl put /coreos.com/network/config '{\"Network\": \"{{kubernetes_cluster_cidr}}\"}'"
 
   handlers:
     - include: ./handlers/handlers.yml

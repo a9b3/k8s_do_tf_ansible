@@ -1,0 +1,9 @@
+{% set ips=[] %}
+{% for host in groups['etcd'] %}
+  {% set to_concat = [hostvars[host]['name'], '=https://', hostvars[host]['ipv4_address_private'], ':2379'] %}
+  {% set str = to_concat|join('') %}
+  {% if ips.insert(loop.index, str) %}
+  {% endif %}
+{% endfor %}
+
+/usr/bin/etcdctl put /coreos.com/network/config '{\"Network\": \"{{ kubernetes_cluster_cidr }}\"}'
