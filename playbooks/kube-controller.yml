@@ -7,25 +7,6 @@
     kubernetes_version: 'v1.4.0'
     kubernetes_cluster_cidr: '10.200.0.0/16'
 
-  handlers:
-    - name: reload kube-apiserver
-      command: "{{ item }}"
-      with_items:
-        - systemctl daemon-reload
-        - systemctl restart kube-apiserver
-
-    - name: reload kube-controller-manager
-      command: "{{ item }}"
-      with_items:
-        - systemctl daemon-reload
-        - systemctl restart kube-controller-manager
-
-    - name: reload kube-scheduler
-      command: "{{ item }}"
-      with_items:
-        - systemctl daemon-reload
-        - systemctl restart kube-scheduler
-
   tasks:
     - name: install python 2
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
@@ -105,3 +86,6 @@
     - service: name=kube-scheduler state=started
 
     - shell: "/usr/bin/etcdctl put /coreos.com/network/config '{\"Network\": \"{{kubernetes_cluster_cidr}}\"}'"
+
+  handlers:
+    - include: ./handlers/handlers.yml

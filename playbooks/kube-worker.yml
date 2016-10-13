@@ -7,25 +7,6 @@
     kubernetes_version: 'v1.4.0'
     flannel_version: 'v0.6.2'
 
-  handlers:
-    - name: reload docker
-      command: "{{ item }}"
-      with_items:
-        - systemctl daemon-reload
-        - systemctl restart docker
-
-    - name: reload kube-proxy
-      command: "{{ item }}"
-      with_items:
-        - systemctl daemon-reload
-        - systemctl restart kube-proxy
-
-    - name: reload kubelet
-      command: "{{ item }}"
-      with_items:
-        - systemctl daemon-reload
-        - systemctl restart kubelet
-
   tasks:
     - name: install python 2
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
@@ -132,3 +113,6 @@
 
     - service: name=kubelet state=started
     - service: name=kube-proxy state=started
+
+  handlers:
+    - include: ./handlers/handlers.yml

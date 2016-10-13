@@ -1,0 +1,42 @@
+---
+- name: reload etcd
+  command: "{{ item }}"
+  with_items:
+    - systemctl daemon-reload
+    - systemctl restart etcd
+
+- name: reload kube-apiserver
+  command: "{{ item }}"
+  with_items:
+    - systemctl daemon-reload
+    - systemctl restart kube-apiserver
+
+- name: reload kube-controller-manager
+  command: "{{ item }}"
+  with_items:
+    - systemctl daemon-reload
+    - systemctl restart kube-controller-manager
+
+- name: reload kube-scheduler
+  command: "{{ item }}"
+  with_items:
+    - systemctl daemon-reload
+    - systemctl restart kube-scheduler
+
+- name: reload docker
+  command: "{{ item }}"
+  with_items:
+    - systemctl daemon-reload
+    - systemctl restart docker
+
+- name: reload kube-proxy
+  command: "{{ item }}"
+  with_items:
+    - systemctl daemon-reload
+    - systemctl restart kube-proxy
+
+- name: reload kubelet
+  command: "{{ item }}"
+  with_items:
+    - systemctl daemon-reload
+    - systemctl restart kubelet

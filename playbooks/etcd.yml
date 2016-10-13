@@ -6,13 +6,6 @@
   vars:
     etcd_version: 'v3.0.10'
 
-  handlers:
-    - name: reload etcd
-      command: "{{ item }}"
-      with_items:
-        - systemctl daemon-reload
-        - systemctl restart etcd
-
   tasks:
     - name: install python 2
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
@@ -72,3 +65,6 @@
 
     - name: start etcd.service
       service: name=etcd state=started
+
+  handlers:
+    - include: ./handlers/handlers.yml
