@@ -1,15 +1,24 @@
 ---
+- name: register variable etcd_installed
+  register: etcd_installed
+  command: etcd --version
+  ignore_errors: true
+
 - name: unarchive etcd binary
   unarchive:
     src="https://github.com/coreos/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
     dest=/opt
     copy=no
+  when: etcd_installed|failed
 
 - name: mv etcd binary to /usr/bin
   command: "{{ item }}"
   with_items:
     - mv /opt/etcd-{{ etcd_version }}-linux-amd64/etcd /usr/bin
     - mv /opt/etcd-{{ etcd_version }}-linux-amd64/etcdctl /usr/bin
+  notify:
+    - reload etcd
+  when: etcd_installed|failed
 
 - name: directory /var/lib/etcd
   file: path=/var/lib/etcd state=directory
@@ -23,3 +32,7 @@
 
 - name: set ETCDCTL_API=2 in environment
   lineinfile: dest=/etc/environment regexp=^ETCDCTL_API line=ETCDCTL_API=2
+
+- lineinfile: dest=/etc/environment regexp=^ETCDCTL_CA_FILE line=ETCDCTL_CA_FILE={{ optdest }}/certs/ca.pem
+- lineinfile: dest=/etc/environment regexp=^ETCDCTL_CERT_FILE line=ETCDCTL_CERT_FILE={{ optdest }}/certs/{{ certfilename }}
+- lineinfile: dest=/etc/environment regexp=^ETCDCTL_KEY_FILE line=ETCDCTL_KEY_FILE={{ optdest }}/certs/{{ keyfilename }}

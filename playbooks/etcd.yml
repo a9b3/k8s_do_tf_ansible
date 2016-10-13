@@ -5,19 +5,15 @@
   gather_facts: False
   vars:
     etcd_version: 'v3.0.10'
+    optdest: '/etc/etcd'
+    certfilename: 'etcd.crt'
+    keyfilename: 'etcd.key'
 
   tasks:
     - name: install python 2
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
-
     - include: ./tasks/certs.yml
-      vars:
-        dest: "/etc/etcd"
-        certfilename: "etcd.crt"
-        keyfilename: "etcd.key"
-
     - include: ./tasks/etcd.yml
-
     - name: start etcd.service
       service: name=etcd state=started
 
