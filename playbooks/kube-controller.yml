@@ -6,16 +6,15 @@
   vars:
     kubernetes_version: 'v1.4.0'
     kubernetes_cluster_cidr: '10.200.0.0/16'
+    optdest: '/etc/kubernetes'
+    certfilename: 'kubernetes.crt'
+    keyfilename: 'kubernetes.key'
 
   tasks:
     - name: install python 2
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
 
     - include: ./tasks/certs.yml
-      vars:
-        dest: "/etc/kubernetes"
-        certfilename: "kubernetes.crt"
-        keyfilename: "kubernetes.key"
 
     - copy: src=./auth/token.csv dest=/etc/kubernetes/certs/
     - copy: src=./auth/authorization-policy.jsonl dest=/etc/kubernetes/certs/

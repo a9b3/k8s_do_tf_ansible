@@ -33,6 +33,7 @@
 - name: set ETCDCTL_API=2 in environment
   lineinfile: dest=/etc/environment regexp=^ETCDCTL_API line=ETCDCTL_API=2
 
+# Allows etcdctl to work without passing in --ca-file --cert-file --key-file
 - lineinfile: dest=/etc/environment regexp=^ETCDCTL_CA_FILE line=ETCDCTL_CA_FILE={{ optdest }}/certs/ca.pem
 - lineinfile: dest=/etc/environment regexp=^ETCDCTL_CERT_FILE line=ETCDCTL_CERT_FILE={{ optdest }}/certs/{{ certfilename }}
 - lineinfile: dest=/etc/environment regexp=^ETCDCTL_KEY_FILE line=ETCDCTL_KEY_FILE={{ optdest }}/certs/{{ keyfilename }}

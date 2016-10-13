@@ -6,16 +6,15 @@
   vars:
     kubernetes_version: 'v1.4.0'
     flannel_version: 'v0.6.2'
+    optdest: "/etc/kubernetes"
+    certfilename: "kubernetes.crt"
+    keyfilename: "kubernetes.key"
 
   tasks:
     - name: install python 2
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
 
     - include: ./tasks/certs.yml
-      vars:
-        dest: "/etc/kubernetes"
-        certfilename: "kubernetes.crt"
-        keyfilename: "kubernetes.key"
 
     - template: src=./configs/kubeconfig.j2 dest=/etc/kubernetes/kubeconfig mode=0700
 
