@@ -7,9 +7,6 @@
 {% endfor %}
 
 {% set current=hostvars[inventory_hostname] %}
-{% set certfile='/etc/kubernetes/certs/kubernetes.crt' %}
-{% set keyfile='/etc/kubernetes/certs/kubernetes.key' %}
-{% set cafile='/etc/kubernetes/certs/ca.pem' %}
 
 [Unit]
 Description=Flannel
@@ -18,9 +15,9 @@ Documentation=https://github.com/coreos/flannel
 [Service]
 ExecStart=/usr/bin/flanneld \
   --etcd-endpoints={{ips|join(',')}} \
-  --etcd-keyfile={{keyfile}} \
-  --etcd-certfile={{certfile}} \
-  --etcd-cafile={{cafile}} \
+  --etcd-keyfile={{ optdest }}/certs/{{ keyfilename }} \
+  --etcd-certfile={{ optdest }}/certs/{{ certfilename }} \
+  --etcd-cafile={{ optdest }}/certs/ca.pem \
   --iface={{current['ipv4_address']}} \
   --ip-masq=true
 Restart=on-failure
