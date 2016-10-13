@@ -56,8 +56,8 @@
         - mv /opt/etcd-{{etcd_version}}-linux-amd64/etcdctl /usr/bin
       when: etcd_installed|failed
 
-    - name: set ETCDCTL_API=3 in environment
-      lineinfile: dest=/etc/environment regexp=^ETCDCTL_API line=ETCDCTL_API=3
+    - name: set ETCDCTL_API=2 in environment
+      lineinfile: dest=/etc/environment regexp=^ETCDCTL_API line=ETCDCTL_API=2
       when: etcd_installed|failed
 
     - name: directory /var/lib/etcd
