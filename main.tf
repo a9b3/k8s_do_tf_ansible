@@ -31,7 +31,6 @@ module "kube-worker" {
 
   count = "${var.kube-worker_count}"
   ssh_fingerprint = "${var.ssh_fingerprint}"
-  etcd_ips = "${module.etcd.public_ips}"
 }
 
 /*****************************************************************************

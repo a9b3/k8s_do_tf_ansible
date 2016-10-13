@@ -9,8 +9,8 @@
 {% set current=hostvars[inventory_hostname] %}
 
 {% set cafile='/etc/etcd/certs/ca.pem' %}
-{% set certfile='/etc/etcd/certs/crt' %}
-{% set keyfile='/etc/etcd/certs/private.key' %}
+{% set certfile='/etc/etcd/certs/etcd.crt' %}
+{% set keyfile='/etc/etcd/certs/etcd.key' %}
 
 [Unit]
 Description=etcd

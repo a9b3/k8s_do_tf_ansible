@@ -1,0 +1,25 @@
+---
+- name: unarchive etcd binary
+  unarchive:
+    src="https://github.com/coreos/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+    dest=/opt
+    copy=no
+
+- name: mv etcd binary to /usr/bin
+  command: "{{ item }}"
+  with_items:
+    - mv /opt/etcd-{{ etcd_version }}-linux-amd64/etcd /usr/bin
+    - mv /opt/etcd-{{ etcd_version }}-linux-amd64/etcdctl /usr/bin
+
+- name: directory /var/lib/etcd
+  file: path=/var/lib/etcd state=directory
+
+- name: template etcd.service
+  template: src=./services/etcd.service.j2
+    dest=/etc/systemd/system/etcd.service
+    mode=0644
+  notify:
+    - reload etcd
+
+- name: set ETCDCTL_API=2 in environment
+  lineinfile: dest=/etc/environment regexp=^ETCDCTL_API line=ETCDCTL_API=2

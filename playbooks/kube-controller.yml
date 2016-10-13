@@ -11,19 +11,11 @@
     - name: install python 2
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
 
-    ##########################################################################
-    # certs
-    ##########################################################################
-
-    - file: path=/etc/kubernetes/certs state=directory
-    - copy: src=../../certs/ca.pem dest=/etc/kubernetes/certs/ca.pem
-    - copy: src=../../certs/ca-key.pem dest=/etc/kubernetes/certs/ca-key.pem
-    - template: src=./scripts/generate-certs.sh.j2 dest=/etc/kubernetes/generate-certs.sh mode=0700
+    - include: ./tasks/certs.yml
       vars:
-        dest: "/etc/kubernetes/certs"
+        dest: "/etc/kubernetes"
         certfilename: "kubernetes.crt"
         keyfilename: "kubernetes.key"
-    - shell: /etc/kubernetes/generate-certs.sh
 
     - copy: src=./auth/token.csv dest=/etc/kubernetes/certs/
     - copy: src=./auth/authorization-policy.jsonl dest=/etc/kubernetes/certs/

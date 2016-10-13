@@ -1,0 +1,22 @@
+---
+- name: ensure folder for certs exists
+  file: path={{ dest }}/certs state=directory
+
+- name: move ca.pem
+  copy: src=../../certs/ca.pem dest={{ dest }}/certs/ca.pem
+
+- name: move ca-key.pem
+  copy: src=../../certs/ca-key.pem dest={{ dest }}/certs/ca-key.pem
+
+- name: move template generate-certs.sh
+  template:
+    src=../scripts/generate-certs.sh.j2
+    dest={{ dest }}/generate-certs.sh
+    mode=0700
+  vars:
+    dest: "{{ dest }}"
+    certfilename: "{{ certfilename }}"
+    keyfilename: "{{ keyfilename }}"
+
+- name: run generate-certs.sh
+  shell: "{{ dest }}/generate-certs.sh"

@@ -10,58 +10,13 @@
     - name: install python 2
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
 
-
-    ##########################################################################
-    # certs
-    ##########################################################################
-
-    - file: path=/etc/etcd/certs state=directory
-    - copy: src=../../certs/ca.pem dest=/etc/etcd/certs/ca.pem
-    - copy: src=../../certs/ca-key.pem dest=/etc/etcd/certs/ca-key.pem
-    - template: src=./scripts/generate-certs.sh.j2 dest=/etc/etcd/generate-certs.sh mode=0700
+    - include: ./tasks/certs.yml
       vars:
-        dest: "/etc/etcd/certs"
-        certfilename: "crt"
-        keyfilename: "key"
-    - shell: /etc/etcd/generate-certs.sh
+        dest: "/etc/etcd"
+        certfilename: "etcd.crt"
+        keyfilename: "etcd.key"
 
-
-    ##########################################################################
-    # etcd
-    ##########################################################################
-
-    - name: register etcd_installed
-      register: etcd_installed
-      command: etcdctl v
-      ignore_errors: true
-
-    - name: unarchive etcd binary
-      unarchive:
-        src="https://github.com/coreos/etcd/releases/download/{{etcd_version}}/etcd-{{etcd_version}}-linux-amd64.tar.gz"
-        dest=/opt
-        copy=no
-      when: etcd_installed|failed
-
-    - name: mv etcd binary to /usr/bin
-      command: "{{ item }}"
-      with_items:
-        - mv /opt/etcd-{{etcd_version}}-linux-amd64/etcd /usr/bin
-        - mv /opt/etcd-{{etcd_version}}-linux-amd64/etcdctl /usr/bin
-      when: etcd_installed|failed
-
-    - name: set ETCDCTL_API=2 in environment
-      lineinfile: dest=/etc/environment regexp=^ETCDCTL_API line=ETCDCTL_API=2
-      when: etcd_installed|failed
-
-    - name: directory /var/lib/etcd
-      file: path=/var/lib/etcd state=directory
-
-    - name: template etcd.service
-      template: src=./services/etcd.service.j2
-        dest=/etc/systemd/system/etcd.service
-        mode=0644
-      notify:
-        - reload etcd
+    - include: ./tasks/etcd.yml
 
     - name: start etcd.service
       service: name=etcd state=started
