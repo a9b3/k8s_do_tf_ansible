@@ -14,11 +14,16 @@
   tasks:
     - name: install python 2
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
     - include: ./tasks/certs.yml
+
     - include: ./tasks/set-cluster-cidr.yml
 
-    - copy: src=./auth/token.csv dest=/etc/kubernetes/certs/
-    - copy: src=./auth/authorization-policy.jsonl dest=/etc/kubernetes/certs/
+    - name: copy token.csv
+      copy: src=./auth/token.csv dest=/etc/kubernetes/certs/
+
+    - name: copy authorization-policy.jsonl
+      copy: src=./auth/authorization-policy.jsonl dest=/etc/kubernetes/certs/
 
     ##########################################################################
     # download kube binaries
@@ -49,33 +54,51 @@
         mode: 0700
 
     ##########################################################################
-    # kube services
+    # kube templates
     ##########################################################################
 
     - name: template kube-apiserver.service
-      template: src=./services/kube-apiserver.service.j2
-        dest=/etc/systemd/system/kube-apiserver.service
-        mode=0644
+      template:
+        src: ./services/kube-apiserver.service.j2
+        dest: /etc/systemd/system/kube-apiserver.service
+        mode: 0644
       notify:
         - reload kube-apiserver
 
     - name: template kube-controller-manager.service
-      template: src=./services/kube-controller-manager.service.j2
-        dest=/etc/systemd/system/kube-controller-manager.service
-        mode=0644
+      template:
+        src: ./services/kube-controller-manager.service.j2
+        dest: /etc/systemd/system/kube-controller-manager.service
+        mode: 0644
       notify:
         - reload kube-controller-manager
 
     - name: template kube-scheduler.service
-      template: src=./services/kube-scheduler.service.j2
-        dest=/etc/systemd/system/kube-scheduler.service
-        mode=0644
+      template:
+        src: ./services/kube-scheduler.service.j2
+        dest: /etc/systemd/system/kube-scheduler.service
+        mode: 0644
       notify:
         - reload kube-scheduler
 
-    - service: name=kube-apiserver state=started
-    - service: name=kube-controller-manager state=started
-    - service: name=kube-scheduler state=started
+    ##########################################################################
+    # kube services
+    ##########################################################################
+
+    - name: start kube-apiserver service
+      service:
+        name: kube-apiserver
+        state: started
+
+    - name: start kube-controller-manager service
+      service:
+        name: kube-controller-manager
+        state: started
+
+    - name: start kube-scheduler service
+      service:
+        name: kube-scheduler
+        state: started
 
   handlers:
     - include: ./handlers/handlers.yml

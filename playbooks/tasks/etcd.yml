@@ -4,14 +4,14 @@
   command: etcd --version
   ignore_errors: true
 
-- name: unarchive etcd binary
+- name: download etcd binary
   unarchive:
-    src="https://github.com/coreos/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
-    dest=/opt
-    copy=no
+    src: "https://github.com/coreos/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+    dest: /opt
+    copy: no
   when: etcd_installed|failed
 
-- name: mv etcd binary to /usr/bin
+- name: move etcd binary to /usr/bin
   command: "{{ item }}"
   with_items:
     - mv /opt/etcd-{{ etcd_version }}-linux-amd64/etcd /usr/bin
@@ -20,20 +20,26 @@
     - reload etcd
   when: etcd_installed|failed
 
-- name: directory /var/lib/etcd
+- name: make sure directory /var/lib/etcd exists
   file: path=/var/lib/etcd state=directory
 
-- name: template etcd.service
-  template: src=./services/etcd.service.j2
-    dest=/etc/systemd/system/etcd.service
-    mode=0644
+- name: move template etcd.service
+  template:
+    src: ./services/etcd.service.j2
+    dest: /etc/systemd/system/etcd.service
+    mode: 0644
   notify:
     - reload etcd
 
-- name: set ETCDCTL_API=2 in environment
+- name: set ETCDCTL_API=2 in /etc/environment
   lineinfile: dest=/etc/environment regexp=^ETCDCTL_API line=ETCDCTL_API=2
 
 # Allows etcdctl to work without passing in --ca-file --cert-file --key-file
-- lineinfile: dest=/etc/environment regexp=^ETCDCTL_CA_FILE line=ETCDCTL_CA_FILE={{ optdest }}/certs/ca.pem
-- lineinfile: dest=/etc/environment regexp=^ETCDCTL_CERT_FILE line=ETCDCTL_CERT_FILE={{ optdest }}/certs/{{ certfilename }}
-- lineinfile: dest=/etc/environment regexp=^ETCDCTL_KEY_FILE line=ETCDCTL_KEY_FILE={{ optdest }}/certs/{{ keyfilename }}
+- name: set ETCDCTL_CA_FILE in /etc/environment
+  lineinfile: dest=/etc/environment regexp=^ETCDCTL_CA_FILE line=ETCDCTL_CA_FILE={{ optdest }}/certs/ca.pem
+
+- name: set ETCDCTL_CERT_FILE in /etc/environment
+  lineinfile: dest=/etc/environment regexp=^ETCDCTL_CERT_FILE line=ETCDCTL_CERT_FILE={{ optdest }}/certs/{{ certfilename }}
+
+- name: set ETCDCTL_KEY_FILE in /etc/environment
+  lineinfile: dest=/etc/environment regexp=^ETCDCTL_KEY_FILE line=ETCDCTL_KEY_FILE={{ optdest }}/certs/{{ keyfilename }}

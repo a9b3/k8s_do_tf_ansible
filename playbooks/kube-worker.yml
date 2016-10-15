@@ -13,6 +13,7 @@
   tasks:
     - name: install python 2
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
     - include: ./tasks/certs.yml
 
     - template: src=./configs/kubeconfig.j2 dest=/etc/kubernetes/kubeconfig mode=0700
@@ -32,9 +33,10 @@
         - mv /opt/flanneld /usr/bin/flanneld
 
     - name: template flannel.service
-      template: src=./services/flannel.service.j2
-        dest=/etc/systemd/system/flannel.service
-        mode=0644
+      template:
+        src: ./services/flannel.service.j2
+        dest: /etc/systemd/system/flannel.service
+        mode: 0644
       notify:
         - reload flannel
 
@@ -51,9 +53,9 @@
 
     - name: unarchive docker
       unarchive:
-        src="https://get.docker.com/builds/Linux/x86_64/docker-1.12.1.tgz"
-        dest=/opt
-        copy=no
+        src: "https://get.docker.com/builds/Linux/x86_64/docker-1.12.1.tgz"
+        dest: /opt
+        copy: no
       when: is_docker_installed|failed
 
     - name: mv docker binary to /usr/bin
@@ -61,8 +63,9 @@
       when: is_docker_installed|failed
 
     - name: copy docker.service
-      copy: src=./services/docker.service
-        dest=/etc/systemd/system/docker.service
+      copy:
+        src: ./services/docker.service
+        dest: /etc/systemd/system/docker.service
       notify:
         - reload docker
 
@@ -70,12 +73,16 @@
     # cni container network interface
     ##########################################################################
 
-    - file: path=/opt/cni state=directory
+    - name: make sure /opt/cni directory exists
+      file:
+        path: /opt/cni
+        state: directory
+
     - name: unarchive cni
       unarchive:
-        src="https://storage.googleapis.com/kubernetes-release/network-plugins/cni-07a8a28637e97b22eb8dfe710eeae1344f69d16e.tar.gz"
-        dest=/opt/cni
-        copy=no
+        src: "https://storage.googleapis.com/kubernetes-release/network-plugins/cni-07a8a28637e97b22eb8dfe710eeae1344f69d16e.tar.gz"
+        dest: /opt/cni
+        copy: no
 
     ##########################################################################
     # download kube binaries
@@ -98,21 +105,26 @@
     ##########################################################################
 
     - name: template kubelet.service
-      template: src=./services/kubelet.service.j2
-        dest=/etc/systemd/system/kubelet.service
-        mode=0644
+      template:
+        src: ./services/kubelet.service.j2
+        dest: /etc/systemd/system/kubelet.service
+        mode: 0644
       notify:
         - reload kubelet
 
     - name: template kube-proxy.service
-      template: src=./services/kube-proxy.service.j2
-        dest=/etc/systemd/system/kube-proxy.service
-        mode=0644
+      template:
+        src: ./services/kube-proxy.service.j2
+        dest: /etc/systemd/system/kube-proxy.service
+        mode: 0644
       notify:
         - reload kube-proxy
 
-    - service: name=kubelet state=started
-    - service: name=kube-proxy state=started
+    - name: start kubelet service
+      service: name=kubelet state=started
+
+    - name: start kube-proxy service
+      service: name=kube-proxy state=started
 
   handlers:
     - include: ./handlers/handlers.yml

@@ -6,9 +6,9 @@
 
 - name: unarchive etcdctl binary
   unarchive:
-    src="https://github.com/coreos/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
-    dest=/opt
-    copy=no
+    src: "https://github.com/coreos/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+    dest: /opt
+    copy: no
   when: etcdctl_installed|failed
 
 - name: mv etcdctl binary to /usr/bin
@@ -17,7 +17,11 @@
     - mv /opt/etcd-{{ etcd_version }}-linux-amd64/etcdctl /usr/bin
   when: etcdctl_installed|failed
 
-- template: src=../scripts/set-cluster-cidr.sh.j2
-    dest={{ optdest }}/set-cluster-cidr.sh
-    mode=0700
-- shell: "{{ optdest }}/set-cluster-cidr.sh"
+- name: move set-cluster-cidr.sh
+  template:
+    src: ../scripts/set-cluster-cidr.sh.j2
+    dest: "{{ optdest }}/set-cluster-cidr.sh"
+    mode: 0700
+
+- name: run set-cluster-cidr.sh
+  shell: "{{ optdest }}/set-cluster-cidr.sh"
