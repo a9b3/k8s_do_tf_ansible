@@ -16,7 +16,13 @@
 
     - include: ./tasks/certs.yml
 
-    - template: src=./configs/kubeconfig.j2 dest=/etc/kubernetes/kubeconfig mode=0700
+    - include: ./tasks/docker-task.yml
+
+    - name: move kubeconfig template
+      template:
+        src: ./configs/kubeconfig.j2
+        dest: /etc/kubernetes/kubeconfig
+        mode: 0700
 
     ##########################################################################
     # flannel
@@ -40,34 +46,10 @@
       notify:
         - reload flannel
 
-    - service: name=flannel state=started
-
-    ##########################################################################
-    # docker
-    ##########################################################################
-
-    - name: register is_docker_installed
-      register: is_docker_installed
-      command: docker --version
-      ignore_errors: true
-
-    - name: unarchive docker
-      unarchive:
-        src: "https://get.docker.com/builds/Linux/x86_64/docker-1.12.1.tgz"
-        dest: /opt
-        copy: no
-      when: is_docker_installed|failed
-
-    - name: mv docker binary to /usr/bin
-      shell: cp /opt/docker/docker* /usr/bin
-      when: is_docker_installed|failed
-
-    - name: copy docker.service
-      copy:
-        src: ./services/docker.service
-        dest: /etc/systemd/system/docker.service
-      notify:
-        - reload docker
+    - name: start flannel service
+      service:
+        name: flannel
+        state: started
 
     ##########################################################################
     # cni container network interface
@@ -85,7 +67,7 @@
         copy: no
 
     ##########################################################################
-    # download kube binaries
+    # kube-proxy
     ##########################################################################
 
     - name: download kube-proxy
@@ -93,16 +75,6 @@
         url: https://storage.googleapis.com/kubernetes-release/release/{{kubernetes_version}}/bin/linux/amd64/kube-proxy
         dest: /usr/bin/kube-proxy
         mode: 0700
-
-    - name: download kubelet
-      get_url:
-        url: https://storage.googleapis.com/kubernetes-release/release/{{kubernetes_version}}/bin/linux/amd64/kubelet
-        dest: /usr/bin/kubelet
-        mode: 0700
-
-    ##########################################################################
-    # kube services
-    ##########################################################################
 
     - name: template kubelet.service
       template:
@@ -112,6 +84,21 @@
       notify:
         - reload kubelet
 
+    - name: start kubelet service
+      service:
+        name: kubelet
+        state: started
+
+    ##########################################################################
+    # kubelet
+    ##########################################################################
+
+    - name: download kubelet
+      get_url:
+        url: https://storage.googleapis.com/kubernetes-release/release/{{kubernetes_version}}/bin/linux/amd64/kubelet
+        dest: /usr/bin/kubelet
+        mode: 0700
+
     - name: template kube-proxy.service
       template:
         src: ./services/kube-proxy.service.j2
@@ -120,11 +107,10 @@
       notify:
         - reload kube-proxy
 
-    - name: start kubelet service
-      service: name=kubelet state=started
-
     - name: start kube-proxy service
-      service: name=kube-proxy state=started
+      service:
+        name: kube-proxy
+        state: started
 
   handlers:
     - include: ./handlers/handlers.yml

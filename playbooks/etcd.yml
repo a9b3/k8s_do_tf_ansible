@@ -12,10 +12,10 @@
   tasks:
     - name: install python 2
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+
     - include: ./tasks/certs.yml
-    - include: ./tasks/etcd.yml
-    - name: start etcd.service
-      service: name=etcd state=started
+
+    - include: ./tasks/etcd-task.yml
 
   handlers:
     - include: ./handlers/handlers.yml

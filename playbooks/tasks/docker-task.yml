@@ -1,0 +1,23 @@
+---
+- name: register is_docker_installed
+  register: is_docker_installed
+  command: docker --version
+  ignore_errors: true
+
+- name: unarchive docker
+  unarchive:
+    src: "https://get.docker.com/builds/Linux/x86_64/docker-1.12.1.tgz"
+    dest: /opt
+    copy: no
+  when: is_docker_installed|failed
+
+- name: mv docker binary to /usr/bin
+  shell: cp /opt/docker/docker* /usr/bin
+  when: is_docker_installed|failed
+
+- name: copy docker.service
+  copy:
+    src: ./services/docker.service
+    dest: /etc/systemd/system/docker.service
+  notify:
+    - reload docker

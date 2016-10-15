@@ -37,14 +37,17 @@ mkdir certs
 ### Terraform apply
 
 ```sh
+terraform get
+terraform plan
 terraform apply
 ```
 
 ### Ansible
 
 ```sh
-ansible-playbook --inventory-file=$(which terraform-inventory) playbooks/etcd/etcd.yml -u root
-ansible-playbook --inventory-file=$(which terraform-inventory) playbooks/kube_controller/kube_controller.yml -u root
+ansible-playbook --inventory-file=$(which terraform-inventory) -u root playbooks/etcd.yml
+ansible-playbook --inventory-file=$(which terraform-inventory) -u root playbooks/kube_controller.yml
+ansible-playbook --inventory-file=$(which terraform-inventory) -u root playbooks/kube_worker.yml
 ```
 
 ### Local kubectl

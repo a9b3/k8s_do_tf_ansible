@@ -21,7 +21,9 @@
   when: etcd_installed|failed
 
 - name: make sure directory /var/lib/etcd exists
-  file: path=/var/lib/etcd state=directory
+  file:
+    path: /var/lib/etcd
+    state: directory
 
 - name: move template etcd.service
   template:
@@ -32,14 +34,31 @@
     - reload etcd
 
 - name: set ETCDCTL_API=2 in /etc/environment
-  lineinfile: dest=/etc/environment regexp=^ETCDCTL_API line=ETCDCTL_API=2
+  lineinfile:
+    dest: /etc/environment
+    regexp: ^ETCDCTL_API
+    line: ETCDCTL_API=2
 
 # Allows etcdctl to work without passing in --ca-file --cert-file --key-file
 - name: set ETCDCTL_CA_FILE in /etc/environment
-  lineinfile: dest=/etc/environment regexp=^ETCDCTL_CA_FILE line=ETCDCTL_CA_FILE={{ optdest }}/certs/ca.pem
+  lineinfile:
+    dest: /etc/environment
+    regexp: ^ETCDCTL_CA_FILE
+    line: "ETCDCTL_CA_FILE={{ optdest }}/certs/ca.pem"
 
 - name: set ETCDCTL_CERT_FILE in /etc/environment
-  lineinfile: dest=/etc/environment regexp=^ETCDCTL_CERT_FILE line=ETCDCTL_CERT_FILE={{ optdest }}/certs/{{ certfilename }}
+  lineinfile:
+    dest: /etc/environment
+    regexp: ^ETCDCTL_CERT_FILE
+    line: "ETCDCTL_CERT_FILE={{ optdest }}/certs/{{ certfilename }}"
 
 - name: set ETCDCTL_KEY_FILE in /etc/environment
-  lineinfile: dest=/etc/environment regexp=^ETCDCTL_KEY_FILE line=ETCDCTL_KEY_FILE={{ optdest }}/certs/{{ keyfilename }}
+  lineinfile:
+    dest: /etc/environment
+    regexp: ^ETCDCTL_KEY_FILE
+    line: "ETCDCTL_KEY_FILE={{ optdest }}/certs/{{ keyfilename }}"
+
+- name: start etcd.service
+  service:
+    name: etcd
+    state: started
