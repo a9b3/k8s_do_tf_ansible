@@ -8,3 +8,4 @@ terraform.tfvars
 *.crt
 *.key
 *.srl
+certs/

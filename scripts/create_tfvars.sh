@@ -10,8 +10,8 @@ OPTIONS:
 EOF
 }
 
-do_token=
-ssh_fingerprint=
+do_token=$DO_TOKEN
+ssh_fingerprint=$DO_SSH_FINGERPRINT
 output=
 while getopts 'ho:' flag; do
   case "${flag}" in
@@ -33,11 +33,11 @@ then
 fi
 
 createTfvars() {
-echo 'do_token = "${do_token}"
-ssh_fingerprint = "${ssh_fingerprint}"
-etcd_count = "2"
-kube-controller_count = "1"
-kube-worker_count = "2"' > $output/terraform.tfvars
+echo "do_token = \"$do_token\"
+ssh_fingerprint = \"$ssh_fingerprint\"
+etcd_count = \"2\"
+kube-controller_count = \"1\"
+kube-worker_count = \"2\"" > $output/terraform.tfvars
 }
 
 createTfvars

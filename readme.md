@@ -1,4 +1,4 @@
-# Prereqs
+## Prereqs
 
 Dynamic inventory script for terraform. Need this for getting host ips from terraform state for use with ansible.
 
@@ -11,7 +11,7 @@ brew install terraform-inventory
 Terraform digitalocean provider needs a valid digitalocean token, and each node requires ssh fingerprint so ansible can ssh into each machine to do it's thing.
 
 - `DO_TOKEN` [tutorial](https://www.digitalocean.com/community/tutorials/how-to-use-the-digitalocean-api-v2)<br>
-- `SSH_FINGERPRINT` [tutorial](https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets)
+- `DO_SSH_FINGERPRINT` [tutorial](https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets)
 
 *note: use this command to get the md5 of the key, use this as ssh_fingerprint*
 
@@ -19,39 +19,35 @@ Terraform digitalocean provider needs a valid digitalocean token, and each node 
 ssh-keygen -E md5 -lf ~/.ssh/do_rsa.pub | awk '{print $2}' | sed "s/^MD5://"
 ```
 
-#### tfvars
+## Instructions
 
-Create the file `terraform.tfvars` in project root, this will store variables that terraform uses.
-
-```sh
-do_token = "<paste digital ocean token>"
-ssh_fingerprint = "<paste ssh fingerprint>"
-etcd_count = "2"
-```
-
-# Instructions
-
-### 1) Generate CA
+### Create terraform.tfvars file
 
 ```sh
-cd certs
-./generate_certs.sh
+./scripts/create_tfvars.sh -o . -d <digital ocean token> -s <md5 ssh fingerprint>
 ```
 
-### 2) Terraform apply
+### Generate CA
+
+```sh
+mkdir certs
+./scripts/generate_certs.sh -o ./certs
+```
+
+### Terraform apply
 
 ```sh
 terraform apply
 ```
 
-### 3) Ansible
+### Ansible
 
 ```sh
 ansible-playbook --inventory-file=$(which terraform-inventory) playbooks/etcd/etcd.yml -u root
 ansible-playbook --inventory-file=$(which terraform-inventory) playbooks/kube_controller/kube_controller.yml -u root
 ```
 
-### 4) Local kubectl
+### Local kubectl
 
 ```
 wget https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/darwin/amd64/kubectl
@@ -65,7 +61,7 @@ Make sure you have kubectl installed locally.
 ./scripts/setup-kubectl.sh $(terraform output kube_controller_ips) <token> 
 ```
 
-# Ansible
+## Ansible
 
 ```sh
 ansible all -m ping # ping all machines
