@@ -20,3 +20,5 @@ ETCDCTL_KEY_FILE={{ optdest }}/certs/{{ keyfilename }} \
 ETCDCTL_ENDPOINTS={{ips|join(",")}} \
 /usr/bin/etcdctl \
 set /coreos.com/network/config '{"Network": "{{ kubernetes_cluster_cidr }}"}'
+
+# set /coreos.com/network/config '{"Network": "{{ kubernetes_cluster_cidr }}", "Backend": {"Type": "vxlan", "VNI": 1}}'

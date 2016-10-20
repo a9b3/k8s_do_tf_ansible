@@ -1,9 +1,14 @@
 [Unit]
 Description=Docker
+Requires=flannel.service
+After=flannel.service
 Documentation=http://docs.docker.io
 
 [Service]
+EnvironmentFile=/run/flannel/subnet.env
 ExecStart=/usr/bin/docker daemon \
+  --bip=${FLANNEL_SUBNET}
+  --mtu=${FLANNEL_MTU}
   --iptables=false \
   --ip-masq=false \
   --host=unix:///var/run/docker.sock \

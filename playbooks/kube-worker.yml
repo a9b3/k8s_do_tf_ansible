@@ -16,9 +16,9 @@
 
     - include: ./tasks/certs.yml
 
-    - include: ./tasks/docker-task.yml
-
     - include: ./tasks/flannel-task.yml
+
+    - include: ./tasks/docker-task.yml
 
     - name: move kubeconfig template
       template:

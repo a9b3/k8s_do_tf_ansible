@@ -4,7 +4,8 @@
     url: https://www.github.com/coreos/flannel/releases/download/{{flannel_version}}/flannel-{{flannel_version}}-linux-amd64.tar.gz
     dest: /opt
 
-- command: "{{ item }}"
+- name: move flannel binary to /usr/bin
+  command: "{{ item }}"
   with_items:
     - tar xf /opt/flannel-{{flannel_version}}-linux-amd64.tar.gz -C /opt
     - mv /opt/flanneld /usr/bin/flanneld
