@@ -21,4 +21,4 @@
 - name: start flannel service
   service:
     name: flannel
-    state: started
+    state: reloaded
