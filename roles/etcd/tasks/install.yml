@@ -1,0 +1,19 @@
+---
+- name: Etcd | Check if etcd is installed
+  raw: etcd --version
+  register: need_etcd
+  ignore_errors: true
+
+- name: Etcd | Download etcd binary
+  unarchive:
+    src: "https://github.com/coreos/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+    dest: /opt
+    copy: no
+  when: need_etcd | failed
+
+- name: Etcd | Move binary to /usr/bin
+  command: "{{ item }}"
+  with_items:
+    - mv /opt/etcd-{{ etcd_version }}-linux-amd64/etcd /usr/bin
+    - mv /opt/etcd-{{ etcd_version }}-linux-amd64/etcdctl /usr/bin
+  when: need_etcd | failed

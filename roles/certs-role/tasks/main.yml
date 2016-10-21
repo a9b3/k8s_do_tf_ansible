@@ -1,0 +1,24 @@
+---
+- name: Certs | Ensure /etc/certs folder exists
+  file:
+    path: "{{ certs_folder }}"
+    state: directory
+
+- name: Certs | Move ca.pem
+  copy:
+    src: ../../../certs/ca.pem
+    dest: "{{ certs_folder }}/ca.pem"
+
+- name: Certs | Move ca-key.pem
+  copy:
+    src: ../../../certs/ca-key.pem
+    dest: "{{ certs_folder }}/ca-key.pem"
+
+- name: Certs | Move generate-certs.sh
+  template:
+    src: generate-certs.sh.j2
+    dest: "{{ certs_folder }}/generate-certs.sh"
+    mode: 0700
+
+- name: Certs | Run generate-certs.sh
+  shell: "{{ certs_folder }}/generate-certs.sh"

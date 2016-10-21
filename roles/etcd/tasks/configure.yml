@@ -1,0 +1,12 @@
+---
+- name: Etcd | Make sure directory /var/lib/etcd exists
+  file:
+    path: /var/lib/etcd
+    state: directory
+
+- name: Etcd | Copy etcd.service systemd file
+  template:
+    src: etcd.service.j2
+    dest: /etc/systemd/system/etcd.service
+    mode: 0644
+  notify: restart etcd

@@ -1,0 +1,34 @@
+---
+- name: Set Fact | certs_folder
+  set_fact:
+    certs_folder: /opt/certs
+
+- name: Set Fact | certs_keyfile, certs_certfile
+  set_fact:
+    certs_keyfile: "{{certs_folder}}/cluster.key"
+    certs_certfile: "{{certs_folder}}/cluster.crt"
+
+- name: Set Fact | global variables
+  set_fact:
+    kube_cluster_name: "cluster.local"
+    kube_service_addresses: 10.233.0.0/18
+    kube_pods_subnet: 10.233.64.0/18
+
+    is_etcd_master: "{{ inventory_hostname in groups['etcd'] }}"
+    is_etcd_proxy: "{{ inventory_hostname not in groups['etcd'] }}"
+
+    etcd_hosts: |-
+      {% for host in groups['etcd'] -%}
+        https://{{ hostvars[host]['ipv4_address_private'] }}:2380{% if not loop.last %},{% endif %}
+      {%- endfor %}
+
+    # use with etcd --initial-cluster
+    etcd_hosts_named: |-
+      {% for host in groups['etcd'] -%}
+        {{ hostvars[host]['name'] }}=https://{{ hostvars[host]['ipv4_address_private'] }}:2380{% if not loop.last %},{% endif %}
+      {%- endfor %}
+
+    kube_controller_ip: |-
+      {% for host in groups['kube-controller'] -%}
+        https://{{ hostvars[host]['ipv4_address_private'] }}:6443
+      {%- endfor %}

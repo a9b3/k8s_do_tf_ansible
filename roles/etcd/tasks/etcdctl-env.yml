@@ -1,0 +1,25 @@
+---
+- name: set ETCDCTL_API=2 in /etc/environment
+  lineinfile:
+    dest: /etc/environment
+    regexp: ^ETCDCTL_API
+    line: ETCDCTL_API=2
+
+# Allows etcdctl to work without passing in --ca-file --cert-file --key-file
+- name: set ETCDCTL_CA_FILE in /etc/environment
+  lineinfile:
+    dest: /etc/environment
+    regexp: ^ETCDCTL_CA_FILE
+    line: "ETCDCTL_CA_FILE={{ certs_folder }}/ca.pem"
+
+- name: set ETCDCTL_CERT_FILE in /etc/environment
+  lineinfile:
+    dest: /etc/environment
+    regexp: ^ETCDCTL_CERT_FILE
+    line: "ETCDCTL_CERT_FILE={{ certs_certfile }}"
+
+- name: set ETCDCTL_KEY_FILE in /etc/environment
+  lineinfile:
+    dest: /etc/environment
+    regexp: ^ETCDCTL_KEY_FILE
+    line: "ETCDCTL_KEY_FILE={{ certs_keyfile }}"

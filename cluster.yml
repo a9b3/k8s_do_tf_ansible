@@ -1,0 +1,11 @@
+---
+- hosts: all
+  gather_facts: false
+  roles:
+    - { role: set-facts, tags: set-facts }
+    - { role: bootstrap-os, tags: bootstrap-os }
+    - { role: certs-role, tags: certs-role }
+
+- hosts: etcd
+  roles:
+    - { role: etcd, tags: etcd }

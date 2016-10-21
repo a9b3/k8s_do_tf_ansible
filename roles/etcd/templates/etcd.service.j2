@@ -1,0 +1,32 @@
+{% set current=hostvars[inventory_hostname] %}
+
+[Unit]
+Description=etcd
+After=network.target
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/etcd \
+  --name={{current['name']}} \
+  --client-cert-auth \
+  --trusted-ca-file={{certs_folder}}/ca.pem \
+  --cert-file={{ certs_certfile }} \
+  --key-file={{ certs_keyfile }} \
+  --peer-trusted-ca-file={{certs_folder}}/ca.pem \
+  --peer-cert-file={{ certs_certfile }} \
+  --peer-key-file={{ certs_keyfile }} \
+  --advertise-client-urls=https://{{current['ipv4_address_private']}}:2379 \
+  --listen-client-urls=https://{{current['ipv4_address_private']}}:2379,http://127.0.0.1:2379 \
+  --initial-advertise-peer-urls=https://{{current['ipv4_address_private']}}:2380 \
+  --listen-peer-urls=https://{{current['ipv4_address_private']}}:2380 \
+  --initial-cluster-token=etcd-cluster-0 \
+  --initial-cluster={{ etcd_hosts_named }} \
+  --initial-cluster-state=new \
+  --data-dir=/var/lib/etcd
+Restart=always
+RestartSec=10s
+LimitNOFILE=40000
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
