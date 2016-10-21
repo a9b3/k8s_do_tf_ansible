@@ -1,12 +1,12 @@
 ---
 - include: install.yml tags=etcd:install
 
+- include: etcdctl-env.yml tags=etcd:etcdctl-env
+
 - include: configure-etcd-master.yml tags=etcd:configure
   when: is_etcd_master
 - include: configure-etcd-proxy.yml tags=etcd:configure
   when: is_etcd_proxy
-
-- include: etcdctl-env.yml tags=etcd:etcdctl-env
 
 - name: Etcd | Ensure etcd is running
   service:
