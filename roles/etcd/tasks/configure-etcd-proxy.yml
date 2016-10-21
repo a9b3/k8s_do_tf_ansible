@@ -1,0 +1,13 @@
+---
+- name: Etcd | Copy etcd.service systemd file
+  template:
+    src: etcd.service.j2
+    dest: /etc/systemd/system/etcd.service
+    mode: 0644
+  notify: restart etcd
+
+- name: Etcd | Copy etcd.env file
+  template:
+    src: etcd-proxy.env.j2
+    dest: /etc/etcd.env
+  notify: restart etcd

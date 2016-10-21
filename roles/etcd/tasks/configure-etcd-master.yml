@@ -4,23 +4,16 @@
   register: etcd_cluster_is_healthy
   ignore_errors: true
   changed_when: false
-  when: is_etcd_master
 
 - name: Etcd | Check if member is in cluster
   shell: "etcdctl --no-sync --peers={{ etcd_peers }} member list | grep -q {{ hostvars[inventory_hostname]['ipv4_address_private'] }}"
   register: etcd_member_in_cluster
   ignore_errors: true
   changed_when: false
-  when: is_etcd_master
 
 - name: Etcd | Add member to the cluster if it is not there
-  when: is_etcd_master and etcd_member_in_cluster.rc != 0 and etcd_cluster_is_healthy.rc == 0
+  when: etcd_member_in_cluster.rc != 0 and etcd_cluster_is_healthy.rc == 0
   shell: "etcdctl --peers={{ etcd_peers }} member add {{ hostvars[inventory_hostname]['name'] }} https://{{ hostvars[inventory_hostname]['ipv4_address_private'] }}:2380"
-
-- name: Etcd | Make sure directory /var/lib/etcd exists
-  file:
-    path: /var/lib/etcd
-    state: directory
 
 - name: Etcd | Copy etcd.service systemd file
   template:

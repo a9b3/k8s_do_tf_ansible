@@ -17,3 +17,8 @@
     - mv /opt/etcd-{{ etcd_version }}-linux-amd64/etcd /usr/bin
     - mv /opt/etcd-{{ etcd_version }}-linux-amd64/etcdctl /usr/bin
   when: need_etcd | failed
+
+- name: Etcd | Make sure directory /var/lib/etcd exists
+  file:
+    path: /var/lib/etcd
+    state: directory
