@@ -1,5 +1,5 @@
 ---
-- name: Certs | Ensure /etc/certs folder exists
+- name: Certs | Ensure certs folder exists
   file:
     path: "{{ certs_folder }}"
     state: directory

@@ -17,6 +17,11 @@
     is_etcd_master: "{{ inventory_hostname in groups['etcd'] }}"
     is_etcd_proxy: "{{ inventory_hostname not in groups['etcd'] }}"
 
+    etcd_peers: |-
+      {% for host in groups['etcd'] -%}
+        https://{{ hostvars[host]['ipv4_address_private'] }}:2379{% if not loop.last %},{% endif %}
+      {%- endfor %}
+
     etcd_hosts: |-
       {% for host in groups['etcd'] -%}
         https://{{ hostvars[host]['ipv4_address_private'] }}:2380{% if not loop.last %},{% endif %}

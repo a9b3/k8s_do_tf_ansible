@@ -9,3 +9,7 @@
 - hosts: etcd
   roles:
     - { role: etcd, tags: etcd }
+
+- hosts: kube-controller
+  roles:
+    - { role: kube-controller, tags: kube-controller }
