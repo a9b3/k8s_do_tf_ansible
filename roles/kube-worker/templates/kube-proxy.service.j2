@@ -1,3 +1,5 @@
+{% set current=hostvars[inventory_hostname] %}
+
 [Unit]
 Description=Kubernetes proxy
 Documentation=https://github.com/GoogleCloudPlatform/kubernetes
@@ -6,6 +8,8 @@ Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 ExecStart=/usr/bin/kube-proxy \
   --master={{ kube_controller_ip }} \
   --kubeconfig={{ certs_folder }}/kubeconfig \
+  --bind-address={{ current['ipv4_address'] }} \
+  --cluster-cidr={{ kube_pods_subnet }} \
   --proxy-mode=iptables \
   --v=2
 
