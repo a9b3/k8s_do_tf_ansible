@@ -1,0 +1,17 @@
+---
+- name: Worker | Move kubeconfig
+  template:
+    src: kubeconfig.j2
+    dest: "{{ certs_folder }}"
+
+- name: Worker | Download kube-kubelet
+  get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/{{kube_version}}/bin/linux/amd64/kube-kubelet"
+    dest: /usr/bin/kube-kubelet
+    mode: 0700
+
+- name: Worker | Download kube-proxy
+  get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/{{kube_version}}/bin/linux/amd64/kube-proxy"
+    dest: /usr/bin/kube-proxy
+    mode: 0700

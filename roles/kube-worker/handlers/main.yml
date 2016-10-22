@@ -1,0 +1,12 @@
+---
+- name: restart kube-proxy
+  command: "{{ item }}"
+  with_items:
+    - systemctl daemon-reload
+    - systemctl restart kube-proxy
+
+- name: restart kubelet
+  command: "{{ item }}"
+  with_items:
+    - systemctl daemon-reload
+    - systemctl restart kubelet

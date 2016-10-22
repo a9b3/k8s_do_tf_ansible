@@ -1,0 +1,16 @@
+---
+- name: Controller | Copy kubelet.service
+  template:
+    src: kubelet.service.j2
+    dest: /etc/systemd/system/kubelet.service
+    mode: 0644
+  notify:
+    - restart kubelet
+
+- name: Controller | Copy kube-proxy.service
+  template:
+    src: kube-proxy.service.j2
+    dest: /etc/systemd/system/kube-proxy.service
+    mode: 0644
+  notify:
+    - restart kube-proxy

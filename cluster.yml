@@ -6,10 +6,17 @@
     - { role: bootstrap-os, tags: bootstrap-os }
     - { role: certs-role, tags: certs-role }
 
-- hosts: etcd:kube-controller:kube-worker
+- hosts: etcd
   roles:
     - { role: etcd, tags: etcd }
 
 - hosts: kube-controller
   roles:
+    - { role: etcd, tags: etcd }
     - { role: kube-controller, tags: kube-controller }
+
+- hosts: kube-worker
+  roles:
+    - { role: etcd, tags: etcd }
+    - { role: docker, tags: docker }
+    - { role: kube-worker, tags: kube-worker }

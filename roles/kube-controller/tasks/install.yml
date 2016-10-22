@@ -1,0 +1,34 @@
+---
+- name: Controller | Copy authorization-policy.jsonl
+  copy:
+    src: authorization-policy.jsonl
+    dest: "{{ certs_folder }}"
+
+- name: Controller | Copy token.csv
+  copy:
+    src: token.csv
+    dest: "{{ certs_folder }}"
+
+- name: Controller | Download kubectl
+  get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/{{kube_version}}/bin/linux/amd64/kubectl"
+    dest: /usr/bin/kubectl
+    mode: 0700
+
+- name: download kube-apiserver
+  get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/{{kube_version}}/bin/linux/amd64/kube-apiserver"
+    dest: /usr/bin/kube-apiserver
+    mode: 0700
+
+- name: download kube-controller-manager
+  get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/{{kube_version}}/bin/linux/amd64/kube-controller-manager"
+    dest: /usr/bin/kube-controller-manager
+    mode: 0700
+
+- name: download kube-scheduler
+  get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/{{kube_version}}/bin/linux/amd64/kube-scheduler"
+    dest: /usr/bin/kube-scheduler
+    mode: 0700

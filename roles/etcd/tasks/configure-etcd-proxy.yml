@@ -9,5 +9,5 @@
 - name: Etcd | Copy etcd.env file
   template:
     src: etcd-proxy.env.j2
-    dest: /etc/etcd.env
+    dest: "{{ env_folder }}/etcd.env"
   notify: restart etcd

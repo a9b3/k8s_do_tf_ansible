@@ -1,0 +1,18 @@
+---
+- name: restart kube-apiserver
+  command: "{{ item }}"
+  with_items:
+    - systemctl daemon-reload
+    - systemctl restart kube-apiserver
+
+- name: restart kube-controller-manager
+  command: "{{ item }}"
+  with_items:
+    - systemctl daemon-reload
+    - systemctl restart kube-controller-manager
+
+- name: restart kube-scheduler
+  command: "{{ item }}"
+  with_items:
+    - systemctl daemon-reload
+    - systemctl restart kube-scheduler

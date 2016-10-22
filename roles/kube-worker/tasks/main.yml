@@ -1,0 +1,16 @@
+---
+- include: cni.yml tags=worker:cni
+- include: install.yml tags=worker:install
+- include: configure.yml tags=worker:configure
+
+- name: Worker | Ensure kubelet is running
+  service:
+    name: kubelet
+    state: started
+    enabled: yes
+
+- name: Worker | Ensure kube-proxy is running
+  service:
+    name: kube-proxy
+    state: started
+    enabled: yes

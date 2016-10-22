@@ -1,0 +1,12 @@
+---
+- name: Docker | Make sure flannel-docker exists
+  file:
+    path: "{{ env_folder }}/flannel-docker"
+    state: touch
+
+- name: Docker | Copy docker.service systemd file
+  template:
+    src: docker.service.j2
+    dest: /etc/systemd/system/docker.service
+    mode: 0644
+  notify: restart docker

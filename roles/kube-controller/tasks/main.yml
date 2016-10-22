@@ -1,0 +1,21 @@
+---
+- include: install.yml tags=controller:install
+- include: configure.yml tags=controller:configure
+
+- name: Controller | Ensure kube-apiserver is running
+  service:
+    name: kube-apiserver
+    state: started
+    enabled: yes
+
+- name: Controller | Ensure kube-controller-manager is running
+  service:
+    name: kube-controller-manager
+    state: started
+    enabled: yes
+
+- name: Controller | Ensure kube-scheduler is running
+  service:
+    name: kube-scheduler
+    state: started
+    enabled: yes

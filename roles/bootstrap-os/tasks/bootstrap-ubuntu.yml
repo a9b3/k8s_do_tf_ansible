@@ -4,6 +4,11 @@
   register: need_python
   ignore_errors: true
 
-- name: Boostrap | Install python 2.x
+- name: Bootstrap | Install python 2.x
   raw: DEBIAN_FRONTEND=noninteractive apt-get install -y python-minimal
   when: need_python | failed
+
+- name: Bootstrap | Make sure /opt/env exists
+  file:
+    path: "{{ env_folder }}"
+    state: directory

@@ -1,0 +1,9 @@
+---
+- include: install.yml tags=docker:install
+- include: configure.yml tags=docker:configure
+
+- name: Docker | Ensure docker is running
+  service:
+    name: docker
+    state: started
+    enabled: yes

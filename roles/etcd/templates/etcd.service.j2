@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=notify
-EnvironmentFile=/etc/etcd.env
+EnvironmentFile={{ env_folder }}/etcd.env
 ExecStart=/usr/bin/etcd
 Restart=always
 RestartSec=10s

@@ -1,0 +1,16 @@
+---
+- name: Docker | Check if docker is installed
+  raw: docker --version
+  register: need_docker
+  ignore_errors: true
+
+- name: Docker | Unarchive docker binary
+  unarchive:
+    src: "https://get.docker.com/builds/Linux/x86_64/docker-1.12.1.tgz"
+    dest: /opt
+    copy: no
+  when: need_docker | failed
+
+- name: Docker | Move docker binary to /usr/bin
+  shell: cp /opt/docker/docker* /usr/bin
+  when: need_docker | failed

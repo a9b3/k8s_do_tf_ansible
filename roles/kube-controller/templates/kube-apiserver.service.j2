@@ -1,0 +1,36 @@
+{% set current=hostvars[inventory_hostname] %}
+
+[Unit]
+Description=Kubernetes API Server
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+
+[Service]
+ExecStart=/usr/bin/kube-apiserver \
+  --admission-control=NamespaceLifecycle,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota \
+  --advertise-address={{ current['ipv4_address_private'] }} \
+  --allow-privileged=true \
+  --apiserver-count={{ groups['kube-controller']|length }} \
+  --authorization-mode=ABAC \
+  --authorization-policy-file={{ certs_folder }}/authorization-policy.jsonl \
+  --bind-address=0.0.0.0 \
+  --enable-swagger-ui=true \
+  --secure-port=6443 \
+  --insecure-bind-address=0.0.0.0 \
+  --insecure-port=8080 \
+  --kubelet-certificate-authority={{ certs_folder }}/ca.pem \
+  --etcd-servers={{ etcd_peers }} \
+  --etcd-cafile={{ certs_folder }}/ca.pem \
+  --etcd-certfile={{ certs_certfile }} \
+  --etcd-keyfile={{ certs_keyfile }} \
+  --service-account-key-file={{ certs_keyfile }} \
+  --service-cluster-ip-range={{ kube_service_ip_range }} \
+  --service-node-port-range=30000-32767 \
+  --tls-cert-file={{ certs_certfile }} \
+  --tls-private-key-file={{ certs_keyfile }} \
+  --token-auth-file={{ certs_folder }}/token.csv \
+  --v=2
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
