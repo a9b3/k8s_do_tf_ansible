@@ -1,6 +1,7 @@
 ---
 - include: install.yml tags=controller:install
 - include: configure.yml tags=controller:configure
+- include: set-cluster-cidr.yml tags=controller:set-cluster-cidr
 
 - name: Controller | Ensure kube-apiserver is running
   service:
