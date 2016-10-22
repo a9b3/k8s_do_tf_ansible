@@ -2,6 +2,11 @@
 - include: install.yml tags=flannel:install
 - include: configure.yml tags=flannel:configure
 
+- name: Flannel | Delete default docker bridge
+  command: ip link delete docker0
+  ignore_errors: yes
+  notify: restart docker
+
 - name: Flannel | ensure flannel service started
   service:
     name: flannel
