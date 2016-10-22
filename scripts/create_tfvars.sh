@@ -37,6 +37,7 @@ echo "do_token = \"$do_token\"
 ssh_fingerprint = \"$ssh_fingerprint\"
 etcd_count = \"2\"
 kube-controller_count = \"1\"
+loadbalancer_count = \"1\"
 kube-worker_count = \"2\"" > $output/terraform.tfvars
 }
 
