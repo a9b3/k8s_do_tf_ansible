@@ -6,11 +6,11 @@ Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 
 [Service]
 ExecStart=/usr/bin/kube-controller-manager \
+  --master=http://127.0.0.1:8080 \
+  --leader-elect=true \
   --allocate-node-cidrs=true \
   --cluster-cidr={{ kube_pods_subnet }} \
   --cluster-name=kubernetes \
-  --leader-elect=true \
-  --master=http://{{ current['ipv4_address_private'] }}:8080 \
   --root-ca-file={{ certs_folder }}/ca.pem \
   --service-account-private-key-file={{ certs_keyfile }} \
   --service-cluster-ip-range={{ kube_service_ip_range }} \

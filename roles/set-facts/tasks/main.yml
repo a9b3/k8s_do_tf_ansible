@@ -12,7 +12,7 @@
   set_fact:
     env_folder: /opt/env
 
-    kube_version: 'v1.4.0'
+    kube_version: 'v1.4.4'
     kube_cluster_name: "cluster.local"
     kube_service_ip_range: '10.32.0.0/24'
     kube_cluster_dns: '10.32.0.10'
@@ -25,11 +25,6 @@
     etcd_peers: |-
       {% for host in groups['etcd'] -%}
         https://{{ hostvars[host]['ipv4_address_private'] }}:2379{% if not loop.last %},{% endif %}
-      {%- endfor %}
-
-    etcd_hosts: |-
-      {% for host in groups['etcd'] -%}
-        https://{{ hostvars[host]['ipv4_address_private'] }}:2380{% if not loop.last %},{% endif %}
       {%- endfor %}
 
     # use with etcd --initial-cluster

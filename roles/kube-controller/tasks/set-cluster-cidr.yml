@@ -1,3 +1,5 @@
 ---
 - name: Controller | Set cluster cidr
-  shell: ". /etc/environment && etcdctl set /coreos.com/network/config '{\"Network\": \"{{ kube_pods_subnet }}\", \"Backend\": {\"Type\": \"vxlan\"}}'"
+  shell: "source /etc/environment && etcdctl set /coreos.com/network/config '{\"Network\": \"{{ kube_pods_subnet }}\", \"Backend\": {\"Type\": \"vxlan\"}}'"
+  args:
+    executable: /bin/bash
