@@ -15,15 +15,15 @@
   when: etcd_member_in_cluster.rc != 0 and etcd_cluster_is_healthy.rc == 0
   shell: "etcdctl --peers={{ etcd_peers }} member add {{ hostvars[inventory_hostname]['name'] }} https://{{ hostvars[inventory_hostname]['ipv4_address_private'] }}:2380"
 
+- name: Etcd | Copy etcd.env file
+  template:
+    src: etcd.env.j2
+    dest: "{{ env_folder }}/etcd.env"
+  notify: restart etcd
+
 - name: Etcd | Copy etcd.service systemd file
   template:
     src: etcd.service.j2
     dest: /etc/systemd/system/etcd.service
     mode: 0644
-  notify: restart etcd
-
-- name: Etcd | Copy etcd.env file
-  template:
-    src: etcd.env.j2
-    dest: "{{ env_folder }}/etcd.env"
   notify: restart etcd
