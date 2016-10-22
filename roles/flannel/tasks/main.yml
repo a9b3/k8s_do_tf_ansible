@@ -1,0 +1,38 @@
+---
+- include: install.yml tags=flannel:install
+- include: configure.yml tags=flannel:configure
+
+- name: Flannel | ensure flannel service started
+  service:
+    name: flannel
+    state: started
+
+- name: Flannel | wait for subnet.env
+  wait_for:
+    path: /run/flannel/subnet.env
+    delay: 5
+    timeout: 600
+
+- name: Flannel | Get flannel_subnet
+  shell: cat /run/flannel/subnet.env | awk -F'=' '$1 == "FLANNEL_SUBNET" {print $2}'
+  register: flannel_subnet_output
+  changed_when: false
+
+- name: Flannel | Get flannel_mtu
+  shell: cat /run/flannel/subnet.env | awk -F'=' '$1 == "FLANNEL_MTU" {print $2}'
+  register: flannel_mtu_output
+  changed_when: false
+
+- set_fact:
+    flannel_subnet: "{{ flannel_subnet_output.stdout }}"
+    flannel_mtu: "{{ flannel_mtu_output.stdout }}"
+
+- name: Flannel | Set docker daemon options
+  template:
+    src: flannel-docker.j2
+    dest: "{{ env_folder }}/flannel-docker"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart docker

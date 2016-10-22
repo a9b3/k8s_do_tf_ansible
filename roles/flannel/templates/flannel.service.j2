@@ -1,0 +1,21 @@
+{% set current=hostvars[inventory_hostname] %}
+
+[Unit]
+Description=Flannel
+Documentation=https://github.com/coreos/flannel
+
+[Service]
+ExecStart=/usr/bin/flanneld \
+  --etcd-endpoints={{ etcd_peers }} \
+  --etcd-keyfile={{ certs_keyfile }} \
+  --etcd-certfile={{ certs_certfile }} \
+  --etcd-cafile={{ certs_folder }}/ca.pem \
+  --iface={{ current['ipv4_address'] }} \
+  --ip-masq=true
+ExecStartPost=-/bin/bash -c "until [ -e /run/flannel/subnet.env ]; do echo \"waiting for write.\"; sleep 3; done "
+TimeoutSec=infinity
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

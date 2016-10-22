@@ -20,3 +20,4 @@
     - { role: etcd, tags: etcd }
     - { role: docker, tags: docker }
     - { role: kube-worker, tags: kube-worker }
+    - { role: flannel, tags: flannel }
