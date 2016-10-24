@@ -1,0 +1,3 @@
+---
+- include: install-confd.yml tags=loadbalancer:install-confd
+- include: nginx.yml tags=loadbalancer:nginx

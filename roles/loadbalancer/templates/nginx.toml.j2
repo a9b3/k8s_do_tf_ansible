@@ -1,0 +1,17 @@
+[template]
+
+src = "nginx.tmpl"
+
+# use this because cannot make /etc/nginx/sites-enabled without
+# permissions
+dest = "/etc/nginx/sites-enabled/app.conf"
+
+keys = [
+  "/registry/services/",
+  "/registry/minions/"
+]
+
+owner = "root"
+mode = "0755"
+
+reload_cmd = "/usr/bin/docker kill -s HUP nginx"

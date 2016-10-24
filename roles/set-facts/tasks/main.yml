@@ -12,16 +12,21 @@
   set_fact:
     env_folder: /opt/env
 
+    # for loadbalancer nginx
+    domain_name: 'permastage.com'
+
     kube_version: 'v1.4.4'
     kube_cluster_name: "cluster.local"
     kube_service_ip_range: '10.32.0.0/24'
     kube_cluster_dns: '10.32.0.10'
     kube_pods_subnet: '10.200.0.0/16'
     flannel_version: 'v0.6.2'
+    confd_version: '0.11.0'
 
     is_etcd_master: "{{ inventory_hostname in groups['etcd'] }}"
     is_etcd_proxy: "{{ inventory_hostname not in groups['etcd'] }}"
 
+    # use for etcd clients
     etcd_peers: |-
       {% for host in groups['etcd'] -%}
         https://{{ hostvars[host]['ipv4_address_private'] }}:2379{% if not loop.last %},{% endif %}
