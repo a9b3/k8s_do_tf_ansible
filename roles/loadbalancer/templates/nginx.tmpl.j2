@@ -5,7 +5,7 @@ upstream kontinuum {
 
 server {
   listen 80;
-  server_name kontinuum.{{domain_name}}
+  server_name kontinuum.{{domain_name}};
 
   location / {
     proxy_pass http://kontinuum;
