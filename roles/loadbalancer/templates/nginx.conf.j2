@@ -1,10 +1,10 @@
 user www-data;
-worker_processes 4;
+worker_processes 8;
 pid /run/nginx.pid;
 
 events {
   worker_connections 768;
-  # multi_accept on;
+  multi_accept on;
 }
 
 http {
@@ -57,5 +57,6 @@ http {
   # Virtual Host Configs
   ##
 
+  include /etc/nginx/conf.d/*.conf;
   include /etc/nginx/sites-enabled/*;
 }

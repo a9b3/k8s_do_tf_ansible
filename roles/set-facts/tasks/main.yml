@@ -25,6 +25,7 @@
 
     is_etcd_master: "{{ inventory_hostname in groups['etcd'] }}"
     is_etcd_proxy: "{{ inventory_hostname not in groups['etcd'] }}"
+    is_loadbalancer: "{{ inventory_hostname in groups['loadbalancer'] }}"
 
     # use for etcd clients
     etcd_peers: |-

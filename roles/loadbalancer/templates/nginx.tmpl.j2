@@ -1,6 +1,6 @@
 upstream kontinuum {
   least_conn;
-  server 104.236.153.35;
+  server 159.203.212.215:32579;
 }
 
 server {
@@ -16,6 +16,7 @@ server {
   }
 }
 
+
 {{ '{{' }} range $dir := ls "/registry/services/endpoints/default" {{ '}}' }}
 
 {{ '{{' }}$servicename := base $dir {{ '}}' }}
@@ -29,7 +30,7 @@ server {
   {{ '{{' }}if (index $json.spec.ports 0).nodePort {{ '}}' }}
   {{ '{{' }}$nodePort := (index $json.spec.ports 0).nodePort  {{ '}}' }}
 
-  upstream {{ '{{' }}$servicename{{ '}}' }}
+  upstream {{ '{{' }}$servicename{{ '}}' }} {
     least_conn;
     {{ '{{' }}range $minionip := ls "/registry/minions" {{ '}}' }}
     server {{ '{{' }}base $minionip{{ '}}' }}:{{ '{{' }}$nodePort{{ '}}' }};
@@ -42,7 +43,7 @@ server {
     {{ '{{' }}if eq $subdomain "index" {{ '}}' }}
     server_name www.{{domain_name}} {{domain_name}};
     {{ '{{' }}else {{ '}}' }}
-    server_name {{ '{{' }}$subdomain{{ '}}' }}.{{domain_name}}
+    server_name {{ '{{' }}$subdomain{{ '}}' }}.{{domain_name}};
     {{ '{{' }}end {{ '}}' }}
 
     location / {

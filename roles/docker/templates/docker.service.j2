@@ -6,11 +6,14 @@ Documentation=http://docs.docker.io
 Type=notify
 EnvironmentFile={{ env_folder }}/flannel-docker
 ExecStart=/usr/bin/docker daemon \
+  {% if is_loadbalancer %}
+  {% else %}
   --iptables=false \
   --ip-masq=false \
   --host=unix:///var/run/docker.sock \
   --log-level=error \
   --storage-driver=overlay \
+  {% endif %}
   $FLANNEL_DOCKER_OPTS
 Restart=on-failure
 RestartSec=5
