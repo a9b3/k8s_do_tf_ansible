@@ -61,3 +61,9 @@ Make sure you have kubectl installed locally.
 ```sh
 ./scripts/setup-kubectl.sh -k $(terraform output kube_controller_ips) -t <token> -c ./certs/ca.pem
 ```
+
+## Dev
+
+Terraform is used for infrastructure and Ansible is responsible for bootstrapping.
+
+The main ansible file is `cluster.yml` this is the top level file responsible for configuring machines with roles. `roles/set-facts` will have variables that the other roles uses.
