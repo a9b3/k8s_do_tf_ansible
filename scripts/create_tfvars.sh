@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Creates the terraform.tfvars file that terraform uses for orchestration
 #
 # required arguments
@@ -21,9 +23,9 @@ EOF
 
 do_token=$DO_TOKEN
 ssh_fingerprint=$DO_SSH_FINGERPRINT
-output=
-while getopts 'ho:' flag; do
-  case "${flag}" in
+output=$(pwd)
+while getopts ":h:d:s:o:" flag; do
+  case $flag in
     h)
       usage
       exit 1
