@@ -1,5 +1,8 @@
 ## Prereqs
 
+- terraform-inventory
+- cfssl
+
 Dynamic inventory script for terraform. Need this for getting host ips from terraform state for use with ansible.
 
 ```sh

@@ -1,3 +1,21 @@
+#!/bin/bash
+#
+# requires cfssl
+# https://github.com/cloudflare/cfssl
+#
+# Creates certs files
+#   ca-config.json
+#   ca-csr.json
+#   ca-key.pem
+#   ca.csr
+#   ca.pem
+#   admin.crt
+#   admin.csr
+#   admin.key
+#
+# verify using the following command
+# openssl x509 -in ca.pem -text -noout
+#
 # ./generate_certs.sh -o <certs folder>
 
 usage() {

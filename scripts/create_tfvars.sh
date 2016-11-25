@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Creates the terraform.tfvars file that terraform uses for orchestration
 #
 # required arguments
