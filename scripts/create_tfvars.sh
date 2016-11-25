@@ -1,3 +1,12 @@
+# Creates the terraform.tfvars file that terraform uses for orchestration
+#
+# required arguments
+#
+# run this command to get md5 fingerprint from do key
+# ssh-keygen -E md5 -lf ~/.ssh/do_rsa.pub | awk '{print $2}' | sed "s/^MD5://"
+#
+# create_tfvars.sh -o <path> -d <do token> -s <md5 ssh fingerprint>
+
 usage() {
 cat << EOF
 usage: $0 options
@@ -32,6 +41,7 @@ then
   exit 1
 fi
 
+# write into terraform.tfvars
 createTfvars() {
 echo "do_token = \"$do_token\"
 ssh_fingerprint = \"$ssh_fingerprint\"
