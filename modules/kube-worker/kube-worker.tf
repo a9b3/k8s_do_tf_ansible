@@ -1,10 +1,6 @@
 variable "count" {}
 variable "ssh_fingerprint" {}
 
-resource "digitalocean_tag" "kube-worker" {
-  name = "kube-worker"
-}
-
 resource "digitalocean_droplet" "kube-worker" {
   count = "${var.count}"
   image = "ubuntu-16-04-x64"
@@ -15,7 +11,6 @@ resource "digitalocean_droplet" "kube-worker" {
   ssh_keys = [
     "${var.ssh_fingerprint}"
   ]
-  tags = ["${digitalocean_tag.kube-worker.name}"]
 }
 
 output "public_ips" {

@@ -1,10 +1,6 @@
 variable "count" {}
 variable "ssh_fingerprint" {}
 
-resource "digitalocean_tag" "loadbalancer" {
-  name = "loadbalancer"
-}
-
 resource "digitalocean_droplet" "loadbalancer" {
   count = "${var.count}"
   image = "ubuntu-16-04-x64"
@@ -15,7 +11,6 @@ resource "digitalocean_droplet" "loadbalancer" {
   ssh_keys = [
     "${var.ssh_fingerprint}"
   ]
-  tags = ["${digitalocean_tag.loadbalancer.name}"]
 }
 
 output "public_ips" {

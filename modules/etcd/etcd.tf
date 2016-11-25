@@ -1,10 +1,6 @@
 variable "count" {}
 variable "ssh_fingerprint" {}
 
-resource "digitalocean_tag" "etcd" {
-  name = "etcd"
-}
-
 resource "digitalocean_droplet" "etcd" {
   count = "${var.count}"
   image = "ubuntu-16-04-x64"
@@ -15,7 +11,6 @@ resource "digitalocean_droplet" "etcd" {
   ssh_keys = [
     "${var.ssh_fingerprint}"
   ]
-  tags = ["${digitalocean_tag.etcd.name}"]
 }
 
 output "public_ips" {
