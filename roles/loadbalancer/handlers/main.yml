@@ -1,6 +1,0 @@
----
-- name: restart confd
-  command: "{{ item }}"
-  with_items:
-    - systemctl daemon-reload
-    - systemctl restart confd

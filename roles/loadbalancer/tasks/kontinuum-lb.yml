@@ -1,11 +1,11 @@
 ---
 - name: Loadbalancer | Check if kontinuum-lb container is running
-  register: kontinuum-lb_running
+  register: kontinuum_lb_running
   raw: docker ps | grep -q kontinuum-lb
   ignore_errors: true
 
 - name: Loadbalancer | Check if kontinuum-lb container is in images
-  register: kontinuum-lb_exists
+  register: kontinuum_lb_exists
   raw: docker ps -a | grep -q kontinuum-lb
   ignore_errors: true
 
@@ -14,11 +14,13 @@
   with_items:
     - docker stop kontinuum-lb
     - docker rm kontinuum-lb
-  when: kontinuum-lb_running.rc == 1 and kontinuum-lb_exists.rc == 0
+  when: kontinuum_lb_running.rc == 1 and kontinuum_lb_exists.rc == 0
 
 - name: Loadbalancer | Run kontinuum-lb container
-  command: docker run --name kontinuum-lb -d -p 80:80 \
+  command: docker run -d -p 80:80 \
+    --name kontinuum-lb \
     --restart on-failure:5 \
     -e DOMAIN={{ domain_name }} \
-    kontinuum-lb
-  when: kontinuum-lb_running | failed
+    --net="host" \
+    esayemm/kontinuum-loadbalancer
+  when: kontinuum_lb_running | failed

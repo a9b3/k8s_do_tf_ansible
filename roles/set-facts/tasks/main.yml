@@ -27,7 +27,7 @@
     is_etcd_proxy: "{{ inventory_hostname not in groups['etcd'] }}"
     is_loadbalancer: "{{ inventory_hostname in groups['loadbalancer'] }}"
 
-    # use for etcd clients
+    # comma delimited list of etcd addresses use for etcd clients
     etcd_peers: |-
       {% for host in groups['etcd'] -%}
         https://{{ hostvars[host]['ipv4_address_private'] }}:2379{% if not loop.last %},{% endif %}
