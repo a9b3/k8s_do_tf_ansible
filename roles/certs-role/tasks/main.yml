@@ -14,6 +14,16 @@
     src: ../../../certs/ca-key.pem
     dest: "{{ certs_folder }}/ca-key.pem"
 
+- name: Certs | Move admin.key
+  copy:
+    src: ../../../certs/admin.key
+    dest: "{{ certs_folder }}/admin.key"
+
+- name: Certs | Move admin.crt
+  copy:
+    src: ../../../certs/admin.crt
+    dest: "{{ certs_folder }}/admin.crt"
+
 - name: Certs | Move generate-certs.sh
   template:
     src: generate-certs.sh.j2
