@@ -1,0 +1,54 @@
+# vim: set syntax=yaml:
+
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: kontinuum
+  labels:
+    run: kontinuum
+    subdomain: kontinuum
+spec:
+  type: NodePort
+  ports:
+  - port: 80 # port to serve service on
+    targetPort: 8080 # containers port
+    protocol: TCP
+  selector:
+    app: kontinuum
+  # sessionAffinity: ClientIP
+
+---
+
+# Deployment
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kontinuum
+spec:
+  replicas: 1
+  # pod definition
+  template:
+    metadata:
+      labels:
+        app: kontinuum
+    spec:
+      containers:
+      - name: kontinuum
+        image: esayemm/kontinuum
+        volumeMounts:
+        - mountPath: /opt/certs
+          name: certs-volume
+        env:
+          -
+            name: MASTER_IP
+            value: <replace with kubernetes controller ip>
+          -
+            name: SUPER_INSECURE_KEY
+            value: 'chAng3m3'
+        ports:
+        - containerPort: 80
+      volumes:
+      - name: certs-volume
+        hostPath:
+          path: /opt/certs
