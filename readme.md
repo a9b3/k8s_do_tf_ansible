@@ -78,6 +78,14 @@ kubectl get componentstatuses
 kubectl get nodes
 ```
 
+(Optional) Deploy the kontinuum server
+
+Edit `addons/kontinuum.yml` and add kubernetes controller ip
+
+```sh
+kubectl apply -f ./addons/kontinuum.yml
+```
+
 ## Dev
 
 Terraform is used for infrastructure and Ansible is responsible for bootstrapping.
